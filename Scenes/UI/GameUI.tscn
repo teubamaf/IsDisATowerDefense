@@ -1,0 +1,111 @@
+[gd_scene load_steps=2 format=3 uid="uid://bk8vh7m3qp1nx"]
+
+[ext_resource type="Script" path="res://Scripts/UI/GameUI.gd" id="1_gameui"]
+
+[node name="GameUI" type="CanvasLayer"]
+script = ExtResource("1_gameui")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TopBar" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/TopBar"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/TopBar/VBoxContainer"]
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/TopBar/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Or: 50 (+0/s)"
+
+[node name="WoodLabel" type="Label" parent="MarginContainer/TopBar/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bois: 30 (+0/s)"
+
+[node name="StoneLabel" type="Label" parent="MarginContainer/TopBar/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pierre: 20 (+0/s)"
+
+[node name="WaveLabel" type="Label" parent="MarginContainer/TopBar/VBoxContainer"]
+layout_mode = 2
+text = "Vague 0"
+horizontal_alignment = 1
+
+[node name="WaveTimerLabel" type="Label" parent="MarginContainer/TopBar/VBoxContainer"]
+layout_mode = 2
+text = "Prochaine vague: 03:00"
+horizontal_alignment = 1
+
+[node name="CastleHPBar" type="ProgressBar" parent="MarginContainer/TopBar/VBoxContainer"]
+layout_mode = 2
+max_value = 1000.0
+value = 1000.0
+show_percentage = false
+
+[node name="BuildPanel" type="PanelContainer" parent="."]
+offset_left = 10.0
+offset_top = 150.0
+offset_right = 160.0
+offset_bottom = 350.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BuildPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BuildPanel/VBoxContainer"]
+layout_mode = 2
+text = "Construction"
+horizontal_alignment = 1
+
+[node name="MineButton" type="Button" parent="BuildPanel/VBoxContainer"]
+layout_mode = 2
+text = "Mine
+50 Or, 20 Bois"
+
+[node name="SawmillButton" type="Button" parent="BuildPanel/VBoxContainer"]
+layout_mode = 2
+text = "Scierie
+40 Or, 30 Bois"
+
+[node name="MarketButton" type="Button" parent="BuildPanel/VBoxContainer"]
+layout_mode = 2
+text = "Marché
+80 Or, 40 Bois"
+
+[node name="TowerButton" type="Button" parent="BuildPanel/VBoxContainer"]
+layout_mode = 2
+text = "Tour
+100 Or, 50 Bois, 20 Pierre"
+
+[node name="InfoPanel" type="PanelContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -60.0
+offset_right = 150.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="InfoLabel" type="Label" parent="InfoPanel"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1

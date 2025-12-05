@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://daep65fasj2rv"]
+
+[ext_resource type="Texture2D" uid="uid://csddd3t12ex88" path="res://Assets/tower.png" id="1_ry8d0"]
+[ext_resource type="Script" uid="uid://ldorr68qx5n3" path="res://Scripts/Buildings/Tower.gd" id="1_tower"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4yjk7"]
+radius = 200.0
+
+[node name="Tower" type="Node2D"]
+script = ExtResource("1_tower")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.4, 0.4, 0.8, 1)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_ry8d0")
+hframes = 3
+vframes = 2
+frame = 3
+
+[node name="AttackRange" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource("CircleShape2D_4yjk7")
+
+[node name="AttackTimer" type="Timer" parent="."]
+
+[node name="HPBar" type="ProgressBar" parent="."]
+offset_left = -20.000002
+offset_top = -73.0
+offset_right = 80.0
+offset_bottom = -63.0
+scale = Vector2(0.3999982, 1)
+show_percentage = false
+metadata/_edit_use_anchors_ = true

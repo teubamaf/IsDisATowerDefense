@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmkx5y2h8nq3d"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/Enemy.gd" id="1_enemy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_enemy"]
+radius = 15.0
+
+[node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_enemy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.8, 0.2, 0.2, 1)
+
+[node name="Body" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.8, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-10, -10, 10, -10, 15, 0, 10, 10, -10, 10, -15, 0)
+
+[node name="Eyes" type="Polygon2D" parent="Sprite2D"]
+color = Color(1, 1, 0, 1)
+polygon = PackedVector2Array(-5, -3, -2, -3, -2, 0, -5, 0)
+
+[node name="Eyes2" type="Polygon2D" parent="Sprite2D"]
+color = Color(1, 1, 0, 1)
+polygon = PackedVector2Array(2, -3, 5, -3, 5, 0, 2, 0)
+
+[node name="HPBar" type="ProgressBar" parent="."]
+offset_left = -15.0
+offset_top = -25.0
+offset_right = 15.0
+offset_bottom = -20.0
+show_percentage = false
+
+[node name="AttackTimer" type="Timer" parent="."]
+one_shot = true

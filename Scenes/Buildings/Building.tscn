@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv7h4r3mp8qxs"]
+
+[ext_resource type="Script" path="res://Scripts/Buildings/Building.gd" id="1_building"]
+
+[node name="Building" type="Node2D"]
+script = ExtResource("1_building")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.6, 0.4, 0.2, 1)
+
+[node name="BuildingShape" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.6, 0.4, 0.2, 1)
+polygon = PackedVector2Array(-25, -30, 25, -30, 25, 20, -25, 20)
+
+[node name="Roof" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.4, 0.2, 0.1, 1)
+polygon = PackedVector2Array(-30, -30, 0, -45, 30, -30)
+
+[node name="Door" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.3, 0.15, 0.05, 1)
+polygon = PackedVector2Array(-10, 0, 10, 0, 10, 20, -10, 20)
+
+[node name="LevelLabel" type="Label" parent="."]
+offset_left = -20.0
+offset_top = -50.0
+offset_right = 20.0
+offset_bottom = -35.0
+text = "Niv. 1"
+horizontal_alignment = 1
