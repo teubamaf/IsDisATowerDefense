@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4wh5xy8nq7kd"]
+
+[ext_resource type="Script" path="res://Scripts/Systems/ChunkGrid.gd" id="1_script"]
+
+[node name="ChunkGrid" type="Node2D" groups=["chunk_grid"]]
+script = ExtResource("1_script")
+
+[node name="FogContainer" type="Node2D" parent="."]
+
+[node name="ChunkContainer" type="Node2D" parent="."]

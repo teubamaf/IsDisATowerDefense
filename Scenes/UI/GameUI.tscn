@@ -109,3 +109,44 @@ layout_mode = 2
 text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="BottomRightPanel" type="PanelContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -170.0
+offset_top = -250.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BottomRightPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="BottomRightPanel/VBoxContainer"]
+layout_mode = 2
+text = "Actions"
+horizontal_alignment = 1
+
+[node name="ExpandButton" type="Button" parent="BottomRightPanel/VBoxContainer"]
+layout_mode = 2
+text = "Étendre territoire
+100 Or, 50 Bois"
+
+[node name="UpgradeButton" type="Button" parent="BottomRightPanel/VBoxContainer"]
+layout_mode = 2
+text = "Améliorations"
+disabled = true
+
+[node name="SkillTreeButton" type="Button" parent="BottomRightPanel/VBoxContainer"]
+layout_mode = 2
+text = "Arbre de talents"
+disabled = true
+
+[node name="PrestigeButton" type="Button" parent="BottomRightPanel/VBoxContainer"]
+layout_mode = 2
+text = "Prestige"
+disabled = true

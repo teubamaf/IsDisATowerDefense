@@ -12,6 +12,17 @@ var can_place: bool = false
 const GRID_SIZE: int = 64
 var occupied_cells: Array[Vector2i] = []
 
+# Taille des bâtiments en cellules (pour les bâtiments multi-cases)
+const BUILDING_SIZES = {
+	BuildMode.MINE: Vector2i(1, 1),
+	BuildMode.SAWMILL: Vector2i(1, 1),
+	BuildMode.MARKET: Vector2i(1, 1),
+	BuildMode.TOWER: Vector2i(1, 1)
+}
+
+# Indicateur visuel de placement
+var placement_indicator: Polygon2D = null
+
 # Scènes de bâtiments
 @export var mine_scene: PackedScene
 @export var sawmill_scene: PackedScene
@@ -36,9 +47,12 @@ func _process(_delta: float):
 		var snapped_pos = snap_to_grid(mouse_pos)
 		ghost_building.global_position = snapped_pos
 
-		# Vérifier si on peut placer
-		var grid_pos = world_to_grid(snapped_pos)
-		can_place = not is_cell_occupied(grid_pos)
+		# Vérifier si on peut placer (toutes les cellules requises)
+		var building_size = BUILDING_SIZES[current_build_mode]
+		can_place = can_place_building(snapped_pos, building_size)
+
+		# Mettre à jour l'indicateur de placement
+		update_placement_indicator(snapped_pos, building_size, can_place)
 
 		# Changer la couleur du ghost
 		if ghost_building.has_node("Sprite2D"):
@@ -72,6 +86,9 @@ func start_build_mode(mode: BuildMode):
 
 	current_build_mode = mode
 
+	# Créer l'indicateur de placement
+	create_placement_indicator()
+
 	# Créer le ghost
 	var scene = get_scene_for_mode(mode)
 	if scene:
@@ -88,6 +105,11 @@ func cancel_build_mode():
 		ghost_building.queue_free()
 		ghost_building = null
 
+	# Supprimer l'indicateur de placement
+	if placement_indicator:
+		placement_indicator.queue_free()
+		placement_indicator = null
+
 	current_build_mode = BuildMode.NONE
 	print("Construction annulée")
 
@@ -103,9 +125,13 @@ func place_building():
 			building.global_position = ghost_building.global_position
 			get_parent().get_node("Buildings").add_child(building)
 
-			# Marquer la cellule comme occupée
-			var grid_pos = world_to_grid(building.global_position)
-			occupied_cells.append(grid_pos)
+			# Marquer toutes les cellules comme occupées
+			var building_size = BUILDING_SIZES[current_build_mode]
+			var base_grid_pos = world_to_grid(building.global_position)
+			for x in range(building_size.x):
+				for y in range(building_size.y):
+					var cell = base_grid_pos + Vector2i(x, y)
+					occupied_cells.append(cell)
 
 			print("✅ Bâtiment placé à ", building.global_position)
 		else:
@@ -142,6 +168,15 @@ func world_to_grid(pos: Vector2) -> Vector2i:
 func is_cell_occupied(grid_pos: Vector2i) -> bool:
 	return grid_pos in occupied_cells
 
+func can_place_building(world_pos: Vector2, size: Vector2i) -> bool:
+	var base_grid_pos = world_to_grid(world_pos)
+	for x in range(size.x):
+		for y in range(size.y):
+			var cell = base_grid_pos + Vector2i(x, y)
+			if is_cell_occupied(cell):
+				return false
+	return true
+
 func disable_ghost_functionality(node: Node):
 	# Désactiver récursivement tous les scripts et zones de collision
 	if node.has_method("set_process"):
@@ -161,3 +196,33 @@ func disable_ghost_functionality(node: Node):
 	# Récursif sur les enfants
 	for child in node.get_children():
 		disable_ghost_functionality(child)
+
+# Indicateur visuel de placement (zone sous le bâtiment)
+func create_placement_indicator():
+	placement_indicator = Polygon2D.new()
+	placement_indicator.z_index = -1  # Sous le ghost
+	add_child(placement_indicator)
+
+func update_placement_indicator(world_pos: Vector2, size: Vector2i, is_valid: bool):
+	if not placement_indicator:
+		return
+
+	placement_indicator.global_position = world_pos
+
+	# Créer le polygone selon la taille du bâtiment
+	var half_cell = GRID_SIZE / 2.0
+	var width = size.x * GRID_SIZE
+	var height = size.y * GRID_SIZE
+
+	placement_indicator.polygon = PackedVector2Array([
+		Vector2(-half_cell, -half_cell),
+		Vector2(-half_cell + width, -half_cell),
+		Vector2(-half_cell + width, -half_cell + height),
+		Vector2(-half_cell, -half_cell + height)
+	])
+
+	# Couleur selon si le placement est valide
+	if is_valid:
+		placement_indicator.color = Color(0.2, 0.8, 0.2, 0.3)  # Vert transparent
+	else:
+		placement_indicator.color = Color(0.8, 0.2, 0.2, 0.3)  # Rouge transparent

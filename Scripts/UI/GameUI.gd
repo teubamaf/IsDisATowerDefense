@@ -18,8 +18,15 @@ extends CanvasLayer
 # Panel d'information
 @onready var info_label = $InfoPanel/InfoLabel
 
-# Référence au BuildingPlacer
+# Panel en bas à droite
+@onready var expand_button = $BottomRightPanel/VBoxContainer/ExpandButton
+@onready var upgrade_button = $BottomRightPanel/VBoxContainer/UpgradeButton
+@onready var skill_tree_button = $BottomRightPanel/VBoxContainer/SkillTreeButton
+@onready var prestige_button = $BottomRightPanel/VBoxContainer/PrestigeButton
+
+# Référence au BuildingPlacer et ChunkGrid
 var building_placer: Node = null
+var chunk_grid: Node = null
 
 func _ready():
 	print("🖥️ GameUI: Initialisation")
@@ -34,9 +41,10 @@ func _ready():
 
 	print("🖥️ GameUI: Signaux connectés")
 
-	# Trouver le BuildingPlacer
+	# Trouver le BuildingPlacer et ChunkGrid
 	await get_tree().process_frame
 	building_placer = get_tree().get_first_node_in_group("building_placer")
+	chunk_grid = get_tree().get_first_node_in_group("chunk_grid")
 
 	# Configuration des boutons de construction
 	if mine_button:
@@ -47,6 +55,16 @@ func _ready():
 		market_button.pressed.connect(func(): request_build(3))
 	if tower_button:
 		tower_button.pressed.connect(func(): request_build(4))
+
+	# Configuration des boutons en bas à droite
+	if expand_button:
+		expand_button.pressed.connect(_on_expand_button_pressed)
+	if upgrade_button:
+		upgrade_button.pressed.connect(_on_upgrade_button_pressed)
+	if skill_tree_button:
+		skill_tree_button.pressed.connect(_on_skill_tree_button_pressed)
+	if prestige_button:
+		prestige_button.pressed.connect(_on_prestige_button_pressed)
 
 	# Initialisation
 	print("🖥️ GameUI: Mise à jour initiale de l'UI")
@@ -131,3 +149,24 @@ func request_build(building_type: int):
 		print("❌ BuildingPlacer introuvable ou méthode manquante !")
 		if building_placer:
 			print("BuildingPlacer existe mais pas de méthode start_build_mode")
+
+# Fonctions pour les boutons du panneau en bas à droite
+func _on_expand_button_pressed():
+	print("🌍 Bouton d'extension du territoire cliqué")
+	if chunk_grid and chunk_grid.has_method("enter_expansion_mode"):
+		chunk_grid.enter_expansion_mode()
+		show_notification("Choisissez une zone adjacente à étendre (Échap ou clic droit pour annuler)", Color.CYAN)
+	else:
+		print("❌ ChunkGrid introuvable")
+
+func _on_upgrade_button_pressed():
+	print("⬆️ Bouton d'améliorations cliqué")
+	show_notification("Système d'améliorations à venir...", Color.GRAY)
+
+func _on_skill_tree_button_pressed():
+	print("🌲 Bouton d'arbre de talents cliqué")
+	show_notification("Arbre de talents à venir...", Color.GRAY)
+
+func _on_prestige_button_pressed():
+	print("⭐ Bouton de prestige cliqué")
+	show_notification("Système de prestige à venir...", Color.GRAY)

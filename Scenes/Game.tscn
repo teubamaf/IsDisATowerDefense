@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bwf8qx3dy5r7m"]
+[gd_scene load_steps=14 format=3 uid="uid://bwf8qx3dy5r7m"]
 
 [ext_resource type="PackedScene" uid="uid://b2v8xnhq1qc5m" path="res://Scenes/Buildings/Castle.tscn" id="1_castle"]
 [ext_resource type="PackedScene" uid="uid://bk8vh7m3qp1nx" path="res://Scenes/UI/GameUI.tscn" id="2_gameui"]
@@ -6,14 +6,17 @@
 [ext_resource type="Script" uid="uid://cge76vkydm4up" path="res://Scripts/Managers/WaveManager.gd" id="4_wavemanager"]
 [ext_resource type="Script" uid="uid://2fy4h2hqhckk" path="res://Scripts/Systems/ResourceSpawner.gd" id="5_resourcespawner"]
 [ext_resource type="PackedScene" uid="uid://c7y3nfq8jp4mk" path="res://Scenes/Entities/CollectableResource.tscn" id="6_resource"]
+[ext_resource type="PackedScene" uid="uid://c4wh5xy8nq7kd" path="res://Scenes/Systems/ChunkGrid.tscn" id="7_chunkgrid"]
 [ext_resource type="Script" uid="uid://bdk3jib4uji4o" path="res://Scripts/Systems/BuildingPlacer.gd" id="8_placer"]
 [ext_resource type="PackedScene" uid="uid://dv7h4r3mp8qxs" path="res://Scenes/Buildings/Building.tscn" id="9_building"]
 [ext_resource type="PackedScene" uid="uid://daep65fasj2rv" path="res://Scenes/Buildings/Tower.tscn" id="10_tower"]
+[ext_resource type="Script" path="res://Scripts/Systems/CameraController.gd" id="11_camera"]
 
 [node name="Game" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(0.8, 0.8)
+script = ExtResource("11_camera")
 
 [node name="Background" type="ColorRect" parent="."]
 offset_left = -2000.0
@@ -40,6 +43,8 @@ max_resources = 10
 [node name="SpawnTimer" type="Timer" parent="ResourceSpawner"]
 
 [node name="Buildings" type="Node2D" parent="."]
+
+[node name="ChunkGrid" parent="." instance=ExtResource("7_chunkgrid")]
 
 [node name="BuildingPlacer" type="Node2D" parent="." groups=["building_placer"]]
 script = ExtResource("8_placer")
