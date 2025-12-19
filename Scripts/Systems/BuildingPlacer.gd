@@ -12,6 +12,9 @@ var can_place: bool = false
 const GRID_SIZE: int = 64
 var occupied_cells: Array[Vector2i] = []
 
+# Zone interdite autour du château
+const CASTLE_NO_BUILD_RADIUS: float = 150.0
+
 # Taille des bâtiments en cellules (pour les bâtiments multi-cases)
 const BUILDING_SIZES = {
 	BuildMode.MINE: Vector2i(1, 1),
@@ -169,6 +172,18 @@ func is_cell_occupied(grid_pos: Vector2i) -> bool:
 	return grid_pos in occupied_cells
 
 func can_place_building(world_pos: Vector2, size: Vector2i) -> bool:
+	# Vérifier si la position est dans une zone débloquée (pas de brouillard)
+	var chunk_grid = get_parent().get_node_or_null("ChunkGrid")
+	if chunk_grid and not chunk_grid.is_position_in_unlocked_chunk(world_pos):
+		return false
+
+	# Vérifier la distance au château (zone interdite)
+	var castle = get_tree().get_first_node_in_group("castle")
+	if castle:
+		var distance_to_castle = world_pos.distance_to(castle.global_position)
+		if distance_to_castle < CASTLE_NO_BUILD_RADIUS:
+			return false
+
 	var base_grid_pos = world_to_grid(world_pos)
 	for x in range(size.x):
 		for y in range(size.y):

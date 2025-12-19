@@ -226,24 +226,39 @@ func create_chunk_visual(chunk_pos: Vector2i):
 
 # === Brouillard de guerre ===
 func create_fog_of_war():
-	# Créer un grand rectangle de brouillard qui couvre toute la zone non débloquée
-	var fog_range = 5  # Nombre de chunks de chaque côté (réduit car chunks plus grands)
+	# S'assurer que le FogContainer est visible
+	if fog_container:
+		fog_container.visible = true
+		fog_container.z_index = 5  # Entre background (-100) et éléments de jeu
+		print("🌫️ FogContainer configuré: visible=", fog_container.visible, ", z_index=", fog_container.z_index)
 
-	for x in range(-fog_range, fog_range + 1):
-		for y in range(-fog_range, fog_range + 1):
-			var chunk_pos = Vector2i(x, y)
+	# Au lieu de créer des centaines de tiles, créer seulement pour les zones adjacentes
+	# Cela réduit drastiquement le nombre de tiles à créer
+	var chunks_to_fog: Array[Vector2i] = []
 
-			# Ne pas mettre de brouillard sur les zones débloquées
-			if is_chunk_unlocked(chunk_pos):
-				print("🌫️ Pas de brouillard sur chunk débloqué: ", chunk_pos)
-				continue
+	# Pour chaque chunk débloqué, ajouter les voisins non débloqués
+	for unlocked_pos in chunks_unlocked.keys():
+		for dx in range(-2, 3):  # 2 chunks autour
+			for dy in range(-2, 3):
+				var neighbor = unlocked_pos + Vector2i(dx, dy)
+				if not is_chunk_unlocked(neighbor) and not neighbor in chunks_to_fog:
+					chunks_to_fog.append(neighbor)
 
-			create_fog_tile(chunk_pos)
+	print("🌫️ Création de ", chunks_to_fog.size(), " fog tiles")
+
+	for chunk_pos in chunks_to_fog:
+		create_fog_tile(chunk_pos)
 
 func create_fog_tile(chunk_pos: Vector2i):
+	if not fog_container:
+		print("❌ ERREUR: fog_container est null!")
+		return
+
 	var fog_node = Polygon2D.new()
 	var world_pos = chunk_to_world(chunk_pos)
 	fog_node.position = world_pos
+	fog_node.z_index = 100  # Z-index très élevé pour être sûr qu'il soit visible
+	fog_node.name = "Fog_" + str(chunk_pos.x) + "_" + str(chunk_pos.y)
 
 	var half_size = CHUNK_SIZE / 2.0
 	fog_node.polygon = PackedVector2Array([
@@ -252,7 +267,78 @@ func create_fog_tile(chunk_pos: Vector2i):
 		Vector2(half_size, half_size),
 		Vector2(-half_size, half_size)
 	])
-	fog_node.color = Color(0.05, 0.05, 0.1, 0.85)  # Noir/bleu très sombre
+
+	# Couleur de base
+	fog_node.color = Color(0.08, 0.08, 0.15, 0.95)
+
+	# Ajouter un shader de brouillard nuageux animé
+	var shader_material = ShaderMaterial.new()
+	var shader = Shader.new()
+	shader.code = """
+shader_type canvas_item;
+
+uniform float time_scale = 0.2;
+uniform vec4 fog_color : source_color = vec4(0.05, 0.05, 0.12, 0.95);
+uniform vec4 cloud_color : source_color = vec4(0.15, 0.15, 0.25, 1.0);
+
+// Fonction de bruit simplifié
+float noise(vec2 p) {
+	return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+float smoothNoise(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	f = f * f * (3.0 - 2.0 * f);
+
+	float a = noise(i);
+	float b = noise(i + vec2(1.0, 0.0));
+	float c = noise(i + vec2(0.0, 1.0));
+	float d = noise(i + vec2(1.0, 1.0));
+
+	return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p) {
+	float value = 0.0;
+	float amplitude = 0.5;
+	for(int i = 0; i < 5; i++) {
+		value += amplitude * smoothNoise(p);
+		p *= 2.0;
+		amplitude *= 0.5;
+	}
+	return value;
+}
+
+void fragment() {
+	vec2 uv = UV * 2.5;
+	float t = TIME * time_scale;
+
+	// Premier calque de nuages qui se déplace lentement
+	vec2 offset1 = vec2(t * 0.08, t * 0.05);
+	float clouds1 = fbm(uv + offset1);
+
+	// Deuxième calque de nuages plus rapide
+	vec2 offset2 = vec2(-t * 0.12, t * 0.07);
+	float clouds2 = fbm(uv * 1.3 + offset2);
+
+	// Combiner les calques
+	float clouds = (clouds1 * 0.6 + clouds2 * 0.4);
+
+	// Créer des zones plus claires et plus sombres
+	clouds = smoothstep(0.3, 0.8, clouds);
+
+	// Mélanger entre la couleur de base et la couleur des nuages
+	vec4 final_color = mix(fog_color, cloud_color, clouds * 0.3);
+
+	// Ajouter une variation d'opacité pour l'effet nuageux
+	final_color.a *= 0.85 + clouds * 0.15;
+
+	COLOR = final_color;
+}
+"""
+	shader_material.shader = shader
+	fog_node.material = shader_material
 
 	fog_container.add_child(fog_node)
 	fog_visuals[chunk_pos] = fog_node

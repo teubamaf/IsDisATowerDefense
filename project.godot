@@ -33,7 +33,3 @@ folder_colors={
 "res://Scenes/": "orange",
 "res://Scripts/": "yellow"
 }
-
-[rendering]
-
-renderer/rendering_method="mobile"

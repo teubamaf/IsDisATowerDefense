@@ -150,3 +150,39 @@ disabled = true
 layout_mode = 2
 text = "Prestige"
 disabled = true
+
+[node name="UpgradePanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -100.0
+offset_right = 150.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UpgradePanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "Bâtiment sélectionné"
+horizontal_alignment = 1
+
+[node name="InfoLabel" type="Label" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "Mine (Niv. 1)
+Production: 1.0/s"
+horizontal_alignment = 1
+
+[node name="UpgradeButton" type="Button" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "Améliorer (50 Or, 30 Bois)"
+
+[node name="CloseButton" type="Button" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "Fermer"

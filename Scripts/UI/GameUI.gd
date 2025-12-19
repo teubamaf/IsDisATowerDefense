@@ -24,9 +24,16 @@ extends CanvasLayer
 @onready var skill_tree_button = $BottomRightPanel/VBoxContainer/SkillTreeButton
 @onready var prestige_button = $BottomRightPanel/VBoxContainer/PrestigeButton
 
-# Référence au BuildingPlacer et ChunkGrid
+# Panel d'amélioration de bâtiment
+@onready var upgrade_panel = $UpgradePanel
+@onready var upgrade_panel_info = $UpgradePanel/VBoxContainer/InfoLabel
+@onready var upgrade_panel_button = $UpgradePanel/VBoxContainer/UpgradeButton
+@onready var upgrade_panel_close = $UpgradePanel/VBoxContainer/CloseButton
+
+# Référence au BuildingPlacer, ChunkGrid et BuildingManager
 var building_placer: Node = null
 var chunk_grid: Node = null
+var building_manager: Node = null
 
 func _ready():
 	print("🖥️ GameUI: Initialisation")
@@ -41,10 +48,11 @@ func _ready():
 
 	print("🖥️ GameUI: Signaux connectés")
 
-	# Trouver le BuildingPlacer et ChunkGrid
+	# Trouver le BuildingPlacer, ChunkGrid et BuildingManager
 	await get_tree().process_frame
 	building_placer = get_tree().get_first_node_in_group("building_placer")
 	chunk_grid = get_tree().get_first_node_in_group("chunk_grid")
+	building_manager = get_tree().get_first_node_in_group("building_manager")
 
 	# Configuration des boutons de construction
 	if mine_button:
@@ -65,6 +73,12 @@ func _ready():
 		skill_tree_button.pressed.connect(_on_skill_tree_button_pressed)
 	if prestige_button:
 		prestige_button.pressed.connect(_on_prestige_button_pressed)
+
+	# Configuration des boutons du panneau d'amélioration
+	if upgrade_panel_button:
+		upgrade_panel_button.pressed.connect(_on_building_upgrade_pressed)
+	if upgrade_panel_close:
+		upgrade_panel_close.pressed.connect(_on_building_upgrade_close_pressed)
 
 	# Initialisation
 	print("🖥️ GameUI: Mise à jour initiale de l'UI")
@@ -170,3 +184,12 @@ func _on_skill_tree_button_pressed():
 func _on_prestige_button_pressed():
 	print("⭐ Bouton de prestige cliqué")
 	show_notification("Système de prestige à venir...", Color.GRAY)
+
+# Fonctions pour le panneau d'amélioration de bâtiment
+func _on_building_upgrade_pressed():
+	if building_manager and building_manager.has_method("try_upgrade_selected"):
+		building_manager.try_upgrade_selected()
+
+func _on_building_upgrade_close_pressed():
+	if building_manager and building_manager.has_method("deselect_building"):
+		building_manager.deselect_building()

@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxkvm8qpj1h3r"]
+
+[ext_resource type="Script" uid="uid://cu5xxdptfgl0x" path="res://Scripts/Buildings/Building.gd" id="1_building"]
+[ext_resource type="Texture2D" uid="uid://cwekdam6k1x0a" path="res://Assets/Mines/Stone_02-Sheet.png" id="2_bakyn"]
+
+[node name="Mine" type="Node2D"]
+script = ExtResource("1_building")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.5, 0.5, 0.5, 1)
+texture_filter = 1
+texture = ExtResource("2_bakyn")
+hframes = 2
+vframes = 2
+
+[node name="LevelLabel" type="Label" parent="."]
+offset_left = -20.0
+offset_top = -50.0
+offset_right = 20.0
+offset_bottom = -35.0
+text = "Niv. 1"
+horizontal_alignment = 1
