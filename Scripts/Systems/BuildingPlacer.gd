@@ -203,6 +203,8 @@ func disable_ghost_functionality(node: Node):
 	if node is Area2D:
 		node.monitoring = false
 		node.monitorable = false
+		# Désactiver la réception des événements d'entrée
+		node.input_pickable = false
 
 	# Désactiver les timers
 	if node is Timer:

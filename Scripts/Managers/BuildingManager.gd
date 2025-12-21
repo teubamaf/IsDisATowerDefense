@@ -15,7 +15,7 @@ func _ready():
 	if upgrade_panel:
 		upgrade_panel.visible = false
 
-func select_building(building: Node2D):
+func select_building(building: Node2D, show_panel: bool = true):
 	# Désélectionner le bâtiment précédent
 	if selected_building and selected_building != building:
 		if selected_building.has_method("set_selected"):
@@ -27,8 +27,11 @@ func select_building(building: Node2D):
 	if selected_building and selected_building.has_method("set_selected"):
 		selected_building.set_selected(true)
 
-	# Afficher le panneau d'amélioration
-	show_upgrade_panel()
+	# Afficher le panneau d'amélioration seulement si demandé
+	if show_panel:
+		show_upgrade_panel()
+	else:
+		hide_upgrade_panel()
 
 func deselect_building():
 	if selected_building and selected_building.has_method("set_selected"):

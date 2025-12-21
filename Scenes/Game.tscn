@@ -1,5 +1,6 @@
-[gd_scene load_steps=17 format=3 uid="uid://bwf8qx3dy5r7m"]
+[gd_scene load_steps=18 format=3 uid="uid://bwf8qx3dy5r7m"]
 
+[ext_resource type="Script" path="res://Scripts/Game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://b2v8xnhq1qc5m" path="res://Scenes/Buildings/Castle.tscn" id="1_castle"]
 [ext_resource type="PackedScene" uid="uid://bk8vh7m3qp1nx" path="res://Scenes/UI/GameUI.tscn" id="2_gameui"]
 [ext_resource type="PackedScene" uid="uid://cmkx5y2h8nq3d" path="res://Scenes/Entities/Enemy.tscn" id="3_enemy"]
@@ -16,6 +17,7 @@
 [ext_resource type="Script" path="res://Scripts/Managers/BuildingManager.gd" id="14_buildingmanager"]
 
 [node name="Game" type="Node2D"]
+script = ExtResource("1_game")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(0.8, 0.8)

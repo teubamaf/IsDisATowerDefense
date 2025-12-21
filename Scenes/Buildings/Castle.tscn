@@ -1,20 +1,19 @@
 [gd_scene load_steps=4 format=3 uid="uid://b2v8xnhq1qc5m"]
 
 [ext_resource type="Script" uid="uid://cdwdt4d3kkclo" path="res://Scripts/Buildings/Castle.gd" id="1_castle"]
-[ext_resource type="Texture2D" uid="uid://csddd3t12ex88" path="res://Assets/tower.png" id="2_qpb5b"]
+[ext_resource type="Texture2D" uid="uid://ditaxukk6nup0" path="res://Assets/Humans/HumanCastle.png" id="2_dx17m"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_castle"]
 radius = 200.0
 
 [node name="Castle" type="Node2D" groups=["castle"]]
+scale = Vector2(0.646752, 0.646752)
 script = ExtResource("1_castle")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.4, 0.4, 0.8, 1)
 scale = Vector2(1.1680554, 1.1680554)
-texture = ExtResource("2_qpb5b")
-hframes = 3
-vframes = 2
+texture = ExtResource("2_dx17m")
 
 [node name="AttackRange" type="Area2D" parent="."]
 collision_layer = 0

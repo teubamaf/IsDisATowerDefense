@@ -8,11 +8,20 @@ extends Node2D
 @onready var attack_timer = $AttackTimer
 @onready var hp_bar = $HPBar
 
+# Race et skins
+var race: String = "human"
+var race_skins = {
+	"human": preload("res://Assets/Humans/HumanCastle.png"),
+	"orc": preload("res://Assets/Orcs/OrcCastle.png")
+}
+
 # Combat
 var enemies_in_range: Array[Node2D] = []
 var current_target: Node2D = null
 
 func _ready():
+	# Appliquer le skin de la race
+	apply_race_skin()
 	# Configurer la portée d'attaque
 	if attack_area and attack_area is CollisionShape2D:
 		var shape = CircleShape2D.new()
@@ -79,3 +88,14 @@ func update_hp_bar():
 	if hp_bar and hp_bar is ProgressBar:
 		hp_bar.max_value = game_manager.castle_max_hp
 		hp_bar.value = game_manager.castle_hp
+
+func set_race(new_race: String):
+	race = new_race
+	if is_node_ready():
+		apply_race_skin()
+
+func apply_race_skin():
+	if sprite and race_skins.has(race):
+		sprite.texture = race_skins[race]
+	else:
+		push_warning("Skin non trouvé pour la race: " + race)
