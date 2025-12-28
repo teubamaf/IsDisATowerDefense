@@ -1,7 +1,7 @@
 extends Node2D
-
+class_name Building
 # Types de bâtiments
-enum BuildingType { MINE, SAWMILL, MARKET, TOWER }
+enum BuildingType { MINE, SAWMILL, MARKET, TOWER, HERO_HALL }
 
 @export var building_type: BuildingType = BuildingType.MINE
 @export var production_rate: float = 1.0  # Ressources par seconde
