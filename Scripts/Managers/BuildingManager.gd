@@ -6,14 +6,18 @@ var selected_building: Node2D = null
 
 # Référence à l'UI
 @onready var upgrade_panel: Control = null
+@onready var market_panel: Control = null
 
 func _ready():
-	# Trouver le panneau d'amélioration dans l'UI
+	# Trouver les panneaux dans l'UI
 	await get_tree().process_frame
 	upgrade_panel = get_node_or_null("/root/Game/GameUI/UpgradePanel")
+	market_panel = get_node_or_null("/root/Game/GameUI/MarketPanel")
 
 	if upgrade_panel:
 		upgrade_panel.visible = false
+	if market_panel:
+		market_panel.visible = false
 
 func select_building(building: Node2D, show_panel: bool = true):
 	# Désélectionner le bâtiment précédent
@@ -27,31 +31,52 @@ func select_building(building: Node2D, show_panel: bool = true):
 	if selected_building and selected_building.has_method("set_selected"):
 		selected_building.set_selected(true)
 
-	# Afficher le panneau d'amélioration seulement si demandé
+	# Afficher le panneau approprié seulement si demandé
 	if show_panel:
-		show_upgrade_panel()
+		show_appropriate_panel()
 	else:
-		hide_upgrade_panel()
+		hide_all_panels()
 
 func deselect_building():
 	if selected_building and selected_building.has_method("set_selected"):
 		selected_building.set_selected(false)
 
 	selected_building = null
-	hide_upgrade_panel()
+	hide_all_panels()
+
+func show_appropriate_panel():
+	if not selected_building:
+		return
+
+	# Vérifier si c'est un Market
+	if selected_building.has_method("get_info_text"):
+		var building_type = selected_building.get("building_type")
+		# BuildingType.MARKET = 2
+		if building_type == 2:
+			show_market_panel()
+			return
+
+	# Sinon afficher le panneau d'amélioration standard
+	show_upgrade_panel()
 
 func show_upgrade_panel():
+	hide_market_panel()
+
 	if not upgrade_panel or not selected_building:
 		return
 
 	upgrade_panel.visible = true
 
 	# Mettre à jour les informations du panneau
-	var info_label = upgrade_panel.get_node_or_null("InfoLabel")
+	var info_label = upgrade_panel.get_node_or_null("VBoxContainer/InfoLabel")
+	if not info_label:
+		info_label = upgrade_panel.get_node_or_null("InfoLabel")
 	if info_label:
 		info_label.text = selected_building.get_info_text()
 
-	var upgrade_button = upgrade_panel.get_node_or_null("UpgradeButton")
+	var upgrade_button = upgrade_panel.get_node_or_null("VBoxContainer/UpgradeButton")
+	if not upgrade_button:
+		upgrade_button = upgrade_panel.get_node_or_null("UpgradeButton")
 	if upgrade_button:
 		var cost = selected_building.get_upgrade_cost()
 		if cost["can_upgrade"]:
@@ -65,15 +90,41 @@ func show_upgrade_panel():
 			upgrade_button.text = "Niveau maximum"
 			upgrade_button.disabled = true
 
+func show_market_panel():
+	hide_upgrade_panel()
+
+	if not market_panel or not selected_building:
+		return
+
+	var level = selected_building.get("level")
+	if level == null:
+		level = 1
+
+	if market_panel.has_method("show_panel"):
+		market_panel.show_panel(level)
+	else:
+		market_panel.visible = true
+
 func hide_upgrade_panel():
 	if upgrade_panel:
 		upgrade_panel.visible = false
+
+func hide_market_panel():
+	if market_panel:
+		if market_panel.has_method("hide_panel"):
+			market_panel.hide_panel()
+		else:
+			market_panel.visible = false
+
+func hide_all_panels():
+	hide_upgrade_panel()
+	hide_market_panel()
 
 func try_upgrade_selected():
 	if selected_building and selected_building.has_method("upgrade"):
 		if selected_building.upgrade():
 			# Rafraîchir l'affichage après amélioration
-			show_upgrade_panel()
+			show_appropriate_panel()
 
 func _input(event: InputEvent):
 	# Désélectionner avec clic droit ou Échap

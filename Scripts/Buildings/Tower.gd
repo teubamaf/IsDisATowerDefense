@@ -6,6 +6,9 @@ extends Node2D
 @export var level: int = 1
 @export var max_level: int = 10
 
+# Scène de la flèche à instancier
+var arrow_scene: PackedScene = preload("res://Scenes/Projectiles/Arrow.tscn")
+
 # Coûts d'amélioration
 @export var upgrade_gold_cost: float = 100.0
 @export var upgrade_wood_cost: float = 50.0
@@ -86,8 +89,11 @@ func _on_attack_timer_timeout():
 		attack(current_target)
 
 func attack(enemy: Node2D):
-	if enemy.has_method("take_damage"):
-		enemy.take_damage(damage)
+	# Créer une flèche et la tirer vers l'ennemi
+	var arrow = arrow_scene.instantiate()
+	get_tree().current_scene.add_child(arrow)
+	arrow.global_position = global_position
+	arrow.setup(enemy, damage)
 
 func _on_body_entered(body: Node2D):
 	if body.is_in_group("enemies"):

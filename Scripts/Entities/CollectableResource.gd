@@ -6,7 +6,7 @@ enum ResourceType { GOLD, WOOD, STONE }
 @export var resource_type: ResourceType = ResourceType.GOLD
 @export var min_amount: float = 1.0
 @export var max_amount: float = 5.0
-@export var lifetime: float = 10.0  # Durée de vie avant disparition
+@export var lifetime: float = 100.0  # Durée de vie avant disparition
 
 var amount: float
 @onready var sprite = $Sprite2D

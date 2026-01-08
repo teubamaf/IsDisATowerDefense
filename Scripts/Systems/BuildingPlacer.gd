@@ -137,6 +137,10 @@ func place_building():
 					occupied_cells.append(cell)
 
 			print("✅ Bâtiment placé à ", building.global_position)
+
+			# Désélectionner tout bâtiment pour éviter que le panel s'affiche
+			await get_tree().process_frame
+			get_tree().call_group("building_manager", "deselect_building")
 		else:
 			print("❌ Erreur: scène de bâtiment introuvable")
 	else:

@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://harvestable_resource"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/HarvestableResource.gd" id="1_harvestable"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_harvestable"]
+radius = 25.0
+
+[node name="HarvestableResource" type="Area2D"]
+script = ExtResource("1_harvestable")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_harvestable")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="Shape" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.5, 0.5, 0.5, 1)
+polygon = PackedVector2Array(-20, 10, -15, -5, -10, -15, 0, -20, 10, -15, 15, -5, 20, 10, 15, 20, -15, 20)
+
+[node name="Highlight" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.7, 0.7, 0.7, 1)
+polygon = PackedVector2Array(-8, -10, 0, -15, 8, -10, 5, -5, -5, -5)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -40.0
+offset_top = -45.0
+offset_right = 40.0
+offset_bottom = -25.0
+text = "+10 Pierre"
+horizontal_alignment = 1
+
+[node name="ProgressLabel" type="Label" parent="."]
+offset_left = -20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 40.0
+text = "0/5"
+horizontal_alignment = 1
+
+[node name="LifetimeTimer" type="Timer" parent="."]
+wait_time = 30.0
+one_shot = true

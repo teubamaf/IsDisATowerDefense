@@ -4,16 +4,24 @@ extends Node2D
 enum BuildingType { MINE, SAWMILL, MARKET, TOWER }
 
 @export var building_type: BuildingType = BuildingType.MINE
-@export var production_rate: float = 1.0  # Ressources par seconde
 @export var level: int = 1
 @export var max_level: int = 10
+
+# Paramètres de spawn de ressources
+@export var spawn_radius_base: float = 100.0
+@export var spawn_interval_base: float = 8.0  # Secondes entre chaque spawn
+@export var max_resources: int = 10  # Maximum de ressources actives autour du bâtiment
 
 # Coûts d'amélioration
 @export var upgrade_gold_cost: float = 50.0
 @export var upgrade_wood_cost: float = 30.0
 
-var production_timer: float = 0.0
+var spawn_timer: float = 0.0
 var is_selected: bool = false
+var spawned_resources: Array[Node] = []
+
+# Scène de ressource récoltable
+var harvestable_scene: PackedScene = preload("res://Scenes/Entities/HarvestableResource.tscn")
 
 # Signal émis quand le bâtiment est cliqué
 signal building_clicked(building: Node2D)
@@ -48,41 +56,77 @@ func _on_click_area_input_event(_viewport, event, _shape_idx):
 		get_tree().call_group("building_manager", "select_building", self)
 
 func _process(delta: float):
-	production_timer += delta
+	# Ne pas spawner pour les Markets et Tours
+	if building_type == BuildingType.MARKET or building_type == BuildingType.TOWER:
+		return
 
-	# Produire des ressources chaque seconde
-	if production_timer >= 1.0:
-		production_timer = 0.0
-		produce()
+	# Nettoyer les ressources détruites
+	clean_spawned_resources()
 
-func produce():
-	var amount = production_rate * level
+	# Timer de spawn
+	spawn_timer += delta
+	var spawn_interval = get_spawn_interval()
 
+	if spawn_timer >= spawn_interval:
+		spawn_timer = 0.0
+		try_spawn_resource()
+
+func get_spawn_radius() -> float:
+	# La zone de spawn augmente de 15% par niveau
+	return spawn_radius_base * (1.0 + level * 0.15)
+
+func get_spawn_interval() -> float:
+	# Le spawn devient 10% plus fréquent par niveau
+	return spawn_interval_base / (1.0 + level * 0.1)
+
+func clean_spawned_resources():
+	spawned_resources = spawned_resources.filter(func(r): return is_instance_valid(r))
+
+func try_spawn_resource():
+	# Vérifier si on peut spawner
+	if spawned_resources.size() >= max_resources:
+		return
+
+	spawn_resource()
+
+func spawn_resource():
+	var resource = harvestable_scene.instantiate()
+
+	# Position aléatoire dans le rayon
+	var spawn_radius = get_spawn_radius()
+	var angle = randf() * TAU
+	var distance = randf_range(spawn_radius * 0.3, spawn_radius)
+	var spawn_pos = global_position + Vector2(cos(angle), sin(angle)) * distance
+
+	resource.global_position = spawn_pos
+
+	# Configurer le type de ressource selon le bâtiment
+	configure_resource(resource)
+
+	# Ajouter à la scène
+	get_tree().current_scene.add_child(resource)
+	spawned_resources.append(resource)
+
+func configure_resource(resource: Node):
+	# Accéder au script HarvestableResource
 	match building_type:
 		BuildingType.MINE:
-			GameManager.add_gold(amount)
-			show_production_text("+%.1f Or" % amount, Color.GOLD)
+			# Mine: 80% pierre, 15% or, 5% rare
+			var roll = randf()
+			if roll < 0.80:
+				resource.resource_type = 1  # STONE
+				resource.resource_amount = randf_range(5, 15) * (1 + level * 0.1)
+			elif roll < 0.95:
+				resource.resource_type = 2  # GOLD
+				resource.resource_amount = randf_range(3, 10) * (1 + level * 0.1)
+			else:
+				resource.resource_type = 3  # RARE
+				resource.resource_amount = randf_range(5, 20) * (1 + level * 0.1)
+
 		BuildingType.SAWMILL:
-			GameManager.add_wood(amount)
-			show_production_text("+%.1f Bois" % amount, Color.SADDLE_BROWN)
-		BuildingType.MARKET:
-			# Le marché génère de l'or
-			GameManager.add_gold(amount * 1.5)
-			show_production_text("+%.1f Or" % (amount * 1.5), Color.GOLD)
-
-func show_production_text(text: String, color: Color):
-	# Créer un label flottant pour montrer la production
-	var floating_label = Label.new()
-	floating_label.text = text
-	floating_label.add_theme_color_override("font_color", color)
-	floating_label.position = Vector2(0, -20)
-	add_child(floating_label)
-
-	# Animation
-	var tween = create_tween()
-	tween.tween_property(floating_label, "position:y", -50, 1.0)
-	tween.parallel().tween_property(floating_label, "modulate:a", 0.0, 1.0)
-	tween.finished.connect(floating_label.queue_free)
+			# Scierie: 100% bois
+			resource.resource_type = 0  # WOOD
+			resource.resource_amount = randf_range(5, 15) * (1 + level * 0.1)
 
 func upgrade() -> bool:
 	if level >= max_level:
@@ -123,17 +167,23 @@ func update_visual():
 
 func get_info_text() -> String:
 	var type_name = ""
+	var production_info = ""
+
 	match building_type:
 		BuildingType.MINE:
 			type_name = "Mine"
+			production_info = "Spawn: Pierre (80%), Or (15%), Rare (5%)\nZone: %.0f px | Intervalle: %.1fs" % [get_spawn_radius(), get_spawn_interval()]
 		BuildingType.SAWMILL:
 			type_name = "Scierie"
+			production_info = "Spawn: Bois (100%%)\nZone: %.0f px | Intervalle: %.1fs" % [get_spawn_radius(), get_spawn_interval()]
 		BuildingType.MARKET:
 			type_name = "Marché"
+			production_info = "Vendez vos ressources contre de l'or"
 		BuildingType.TOWER:
 			type_name = "Tour"
+			production_info = "Bâtiment défensif"
 
-	return "%s (Niv. %d)\nProduction: %.1f/s" % [type_name, level, production_rate * level]
+	return "%s (Niv. %d)\n%s" % [type_name, level, production_info]
 
 func get_upgrade_cost() -> Dictionary:
 	if level >= max_level:

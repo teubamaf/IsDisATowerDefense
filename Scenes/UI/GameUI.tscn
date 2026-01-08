@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bk8vh7m3qp1nx"]
+[gd_scene load_steps=3 format=3 uid="uid://bk8vh7m3qp1nx"]
 
 [ext_resource type="Script" path="res://Scripts/UI/GameUI.gd" id="1_gameui"]
+[ext_resource type="Script" path="res://Scripts/UI/MarketPanel.gd" id="2_marketpanel"]
 
 [node name="GameUI" type="CanvasLayer"]
 script = ExtResource("1_gameui")
@@ -184,5 +185,102 @@ layout_mode = 2
 text = "Améliorer (50 Or, 30 Bois)"
 
 [node name="CloseButton" type="Button" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "Fermer"
+
+[node name="MarketPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = -300.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("2_marketpanel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarketPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+text = "Marché - Vente"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="WoodRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="WoodLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bois:"
+
+[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodRow"]
+layout_mode = 2
+text = "-"
+
+[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "10"
+horizontal_alignment = 1
+
+[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodRow"]
+layout_mode = 2
+text = "+"
+
+[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 0)
+text = "20 Or"
+horizontal_alignment = 2
+
+[node name="SellButton" type="Button" parent="MarketPanel/VBoxContainer/WoodRow"]
+layout_mode = 2
+text = "Vendre"
+
+[node name="StoneRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="StoneLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pierre:"
+
+[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneRow"]
+layout_mode = 2
+text = "-"
+
+[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "10"
+horizontal_alignment = 1
+
+[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneRow"]
+layout_mode = 2
+text = "+"
+
+[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 0)
+text = "30 Or"
+horizontal_alignment = 2
+
+[node name="SellButton" type="Button" parent="MarketPanel/VBoxContainer/StoneRow"]
+layout_mode = 2
+text = "Vendre"
+
+[node name="HSeparator2" type="HSeparator" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="MarketPanel/VBoxContainer"]
 layout_mode = 2
 text = "Fermer"
