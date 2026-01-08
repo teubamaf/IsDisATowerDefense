@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bwf8qx3dy5r7m"]
+[gd_scene load_steps=19 format=3 uid="uid://bwf8qx3dy5r7m"]
 
 [ext_resource type="Script" path="res://Scripts/Game.gd" id="1_game"]
 [ext_resource type="PackedScene" uid="uid://b2v8xnhq1qc5m" path="res://Scenes/Buildings/Castle.tscn" id="1_castle"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://daep65fasj2rv" path="res://Scenes/Buildings/Tower.tscn" id="12_tower"]
 [ext_resource type="Script" path="res://Scripts/Systems/CameraController.gd" id="13_camera"]
 [ext_resource type="Script" path="res://Scripts/Managers/BuildingManager.gd" id="14_buildingmanager"]
+[ext_resource type="PackedScene" uid="uid://cma6ky6wsckxd" path="res://Scenes/Buildings/HeroHall.tscn" id="15_herohall"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -58,6 +59,7 @@ mine_scene = ExtResource("9_mine")
 sawmill_scene = ExtResource("10_sawmill")
 market_scene = ExtResource("11_market")
 tower_scene = ExtResource("12_tower")
+hero_hall_scene = ExtResource("15_herohall")
 
 [node name="BuildingManager" type="Node" parent="." groups=["building_manager"]]
 script = ExtResource("14_buildingmanager")

@@ -6,6 +6,13 @@ extends Node2D
 @export var level: int = 1
 @export var max_level: int = 10
 
+# Stats de vie (les tours ont plus de HP)
+@export var max_hp: float = 200.0
+var current_hp: float = 200.0
+
+# Marqueur pour indiquer que c'est une tour (menace pour les ennemis)
+var is_tower: bool = true
+
 # Scène de la flèche à instancier
 var arrow_scene: PackedScene = preload("res://Scenes/Projectiles/Arrow.tscn")
 
@@ -18,6 +25,9 @@ var enemies_in_range: Array[Node2D] = []
 var current_target: Node2D = null
 var is_selected: bool = false
 
+# Signal de destruction
+signal building_destroyed(building: Node2D)
+
 # Signal émis quand la tour est cliquée
 signal building_clicked(building: Node2D)
 
@@ -28,6 +38,12 @@ signal building_clicked(building: Node2D)
 @onready var click_area: Area2D = null
 
 func _ready():
+	# Ajouter au groupe buildings pour la détection par les ennemis
+	add_to_group("buildings")
+
+	# Initialiser les HP
+	current_hp = max_hp
+
 	# Créer une zone cliquable
 	create_click_area()
 
@@ -168,3 +184,19 @@ func get_upgrade_cost() -> Dictionary:
 		"stone": upgrade_stone_cost * cost_multiplier,
 		"can_upgrade": true
 	}
+
+func take_damage(amount: float):
+	current_hp -= amount
+
+	# Effet visuel de dégâts
+	if sprite:
+		var tween = create_tween()
+		tween.tween_property(sprite, "modulate", Color.RED, 0.1)
+		tween.tween_property(sprite, "modulate", Color(0.4, 0.4, 0.8) if not is_selected else Color(1.2, 1.2, 1.0), 0.1)
+
+	if current_hp <= 0:
+		die()
+
+func die():
+	building_destroyed.emit(self)
+	queue_free()

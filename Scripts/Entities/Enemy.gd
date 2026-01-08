@@ -6,9 +6,11 @@ extends CharacterBody2D
 @export var damage: float = 10.0
 @export var gold_reward: float = 5.0
 @export var attack_cooldown: float = 1.0
+@export var detection_range: float = 150.0  # Portée de détection des bâtiments
 
 var current_hp: float
 var castle_target: Node2D = null
+var current_target: Node2D = null  # Cible actuelle (bâtiment ou château)
 var can_attack: bool = true
 
 # Références
@@ -35,23 +37,60 @@ func _physics_process(_delta: float):
 	if castle_target == null or not is_instance_valid(castle_target):
 		return
 
-	# Se déplacer vers le château
-	var direction = (castle_target.global_position - global_position).normalized()
+	# Chercher le bâtiment le plus proche dans la portée de détection
+	find_nearest_target()
+
+	# Déterminer la cible (bâtiment proche ou château)
+	var target = current_target if current_target and is_instance_valid(current_target) else castle_target
+
+	# Se déplacer vers la cible
+	var direction = (target.global_position - global_position).normalized()
 	velocity = direction * speed
 
 	# Vérifier si on est assez proche pour attaquer
-	var distance = global_position.distance_to(castle_target.global_position)
+	var distance = global_position.distance_to(target.global_position)
 	if distance < 50.0:  # Distance d'attaque
 		velocity = Vector2.ZERO
-		if can_attack and castle_target.has_method("take_damage"):
-			attack_castle()
+		if can_attack:
+			attack_target(target)
 
 	move_and_slide()
 
-func attack_castle():
-	if castle_target and castle_target.has_method("take_damage"):
-		castle_target.take_damage(damage)
-		print("Ennemi attaque le château ! Dégâts: ", damage)
+func find_nearest_target():
+	# Chercher le bâtiment le plus proche, en priorisant les tours (menaces)
+	var buildings = get_tree().get_nodes_in_group("buildings")
+	var closest_tower: Node2D = null
+	var closest_tower_distance: float = detection_range
+	var closest_building: Node2D = null
+	var closest_building_distance: float = detection_range
+
+	for building in buildings:
+		if is_instance_valid(building) and building.has_method("take_damage"):
+			var distance = global_position.distance_to(building.global_position)
+
+			# Vérifier si c'est une tour (priorité)
+			if building.get("is_tower") == true:
+				if distance < closest_tower_distance:
+					closest_tower_distance = distance
+					closest_tower = building
+			else:
+				if distance < closest_building_distance:
+					closest_building_distance = distance
+					closest_building = building
+
+	# Prioriser les tours, sinon cibler le bâtiment le plus proche
+	if closest_tower:
+		current_target = closest_tower
+	else:
+		current_target = closest_building
+
+func attack_target(target: Node2D):
+	if target and target.has_method("take_damage"):
+		target.take_damage(damage)
+		if target == castle_target:
+			print("Ennemi attaque le château ! Dégâts: ", damage)
+		else:
+			print("Ennemi attaque un bâtiment ! Dégâts: ", damage)
 		can_attack = false
 		if attack_timer:
 			attack_timer.start()

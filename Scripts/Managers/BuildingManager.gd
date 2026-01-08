@@ -7,17 +7,21 @@ var selected_building: Node2D = null
 # Référence à l'UI
 @onready var upgrade_panel: Control = null
 @onready var market_panel: Control = null
+@onready var hero_hall_panel: Control = null
 
 func _ready():
 	# Trouver les panneaux dans l'UI
 	await get_tree().process_frame
 	upgrade_panel = get_node_or_null("/root/Game/GameUI/UpgradePanel")
 	market_panel = get_node_or_null("/root/Game/GameUI/MarketPanel")
+	hero_hall_panel = get_node_or_null("/root/Game/GameUI/HeroHallPanel")
 
 	if upgrade_panel:
 		upgrade_panel.visible = false
 	if market_panel:
 		market_panel.visible = false
+	if hero_hall_panel:
+		hero_hall_panel.visible = false
 
 func select_building(building: Node2D, show_panel: bool = true):
 	# Désélectionner le bâtiment précédent
@@ -48,12 +52,15 @@ func show_appropriate_panel():
 	if not selected_building:
 		return
 
-	# Vérifier si c'est un Market
+	# Vérifier le type de bâtiment
 	if selected_building.has_method("get_info_text"):
 		var building_type = selected_building.get("building_type")
-		# BuildingType.MARKET = 2
-		if building_type == 2:
+		# BuildingType: MINE=0, SAWMILL=1, MARKET=2, TOWER=3, HERO_HALL=4
+		if building_type == 2:  # MARKET
 			show_market_panel()
+			return
+		elif building_type == 4:  # HERO_HALL
+			show_hero_hall_panel()
 			return
 
 	# Sinon afficher le panneau d'amélioration standard
@@ -61,6 +68,7 @@ func show_appropriate_panel():
 
 func show_upgrade_panel():
 	hide_market_panel()
+	hide_hero_hall_panel()
 
 	if not upgrade_panel or not selected_building:
 		return
@@ -92,6 +100,7 @@ func show_upgrade_panel():
 
 func show_market_panel():
 	hide_upgrade_panel()
+	hide_hero_hall_panel()
 
 	if not market_panel or not selected_building:
 		return
@@ -105,6 +114,18 @@ func show_market_panel():
 	else:
 		market_panel.visible = true
 
+func show_hero_hall_panel():
+	hide_upgrade_panel()
+	hide_market_panel()
+
+	if not hero_hall_panel or not selected_building:
+		return
+
+	if hero_hall_panel.has_method("show_panel"):
+		hero_hall_panel.show_panel(selected_building)
+	else:
+		hero_hall_panel.visible = true
+
 func hide_upgrade_panel():
 	if upgrade_panel:
 		upgrade_panel.visible = false
@@ -116,9 +137,17 @@ func hide_market_panel():
 		else:
 			market_panel.visible = false
 
+func hide_hero_hall_panel():
+	if hero_hall_panel:
+		if hero_hall_panel.has_method("hide_panel"):
+			hero_hall_panel.hide_panel()
+		else:
+			hero_hall_panel.visible = false
+
 func hide_all_panels():
 	hide_upgrade_panel()
 	hide_market_panel()
+	hide_hero_hall_panel()
 
 func try_upgrade_selected():
 	if selected_building and selected_building.has_method("upgrade"):

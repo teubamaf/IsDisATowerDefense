@@ -2,7 +2,7 @@ extends Node2D
 
 # Système de placement de bâtiments
 
-enum BuildMode { NONE, MINE, SAWMILL, MARKET, TOWER }
+enum BuildMode { NONE, MINE, SAWMILL, MARKET, TOWER, HERO_HALL }
 
 var current_build_mode: BuildMode = BuildMode.NONE
 var ghost_building: Node2D = null
@@ -20,7 +20,8 @@ const BUILDING_SIZES = {
 	BuildMode.MINE: Vector2i(1, 1),
 	BuildMode.SAWMILL: Vector2i(1, 1),
 	BuildMode.MARKET: Vector2i(1, 1),
-	BuildMode.TOWER: Vector2i(1, 1)
+	BuildMode.TOWER: Vector2i(1, 1),
+	BuildMode.HERO_HALL: Vector2i(1, 1)
 }
 
 # Indicateur visuel de placement
@@ -31,13 +32,15 @@ var placement_indicator: Polygon2D = null
 @export var sawmill_scene: PackedScene
 @export var market_scene: PackedScene
 @export var tower_scene: PackedScene
+@export var hero_hall_scene: PackedScene
 
 # Coûts
 const COSTS = {
 	BuildMode.MINE: {"gold": 50, "wood": 20, "stone": 0},
 	BuildMode.SAWMILL: {"gold": 40, "wood": 30, "stone": 0},
 	BuildMode.MARKET: {"gold": 80, "wood": 40, "stone": 0},
-	BuildMode.TOWER: {"gold": 100, "wood": 50, "stone": 20}
+	BuildMode.TOWER: {"gold": 100, "wood": 50, "stone": 20},
+	BuildMode.HERO_HALL: {"gold": 200, "wood": 100, "stone": 50}
 }
 
 func _ready():
@@ -68,9 +71,12 @@ func _input(event: InputEvent):
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			if can_place:
 				place_building()
+			# Consommer l'événement pour éviter que le bâtiment soit sélectionné
+			get_viewport().set_input_as_handled()
 
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 			cancel_build_mode()
+			get_viewport().set_input_as_handled()
 
 func start_build_mode(mode: BuildMode):
 	print("start_build_mode appelé avec mode: ", mode)
@@ -158,6 +164,8 @@ func get_scene_for_mode(mode: BuildMode) -> PackedScene:
 			return market_scene
 		BuildMode.TOWER:
 			return tower_scene
+		BuildMode.HERO_HALL:
+			return hero_hall_scene
 	return null
 
 func snap_to_grid(pos: Vector2) -> Vector2:

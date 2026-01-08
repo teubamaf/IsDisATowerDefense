@@ -14,6 +14,7 @@ extends CanvasLayer
 @onready var sawmill_button = $BuildPanel/VBoxContainer/SawmillButton
 @onready var market_button = $BuildPanel/VBoxContainer/MarketButton
 @onready var tower_button = $BuildPanel/VBoxContainer/TowerButton
+@onready var hero_hall_button = $BuildPanel/VBoxContainer/HeroHallButton
 
 # Panel d'information
 @onready var info_label = $InfoPanel/InfoLabel
@@ -63,6 +64,8 @@ func _ready():
 		market_button.pressed.connect(func(): request_build(3))
 	if tower_button:
 		tower_button.pressed.connect(func(): request_build(4))
+	if hero_hall_button:
+		hero_hall_button.pressed.connect(func(): request_build(5))
 
 	# Configuration des boutons en bas à droite
 	if expand_button:

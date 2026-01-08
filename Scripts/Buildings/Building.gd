@@ -7,6 +7,10 @@ enum BuildingType { MINE, SAWMILL, MARKET, TOWER, HERO_HALL }
 @export var level: int = 1
 @export var max_level: int = 10
 
+# Stats de vie
+@export var max_hp: float = 100.0
+var current_hp: float = 100.0
+
 # Paramètres de spawn de ressources
 @export var spawn_radius_base: float = 100.0
 @export var spawn_interval_base: float = 8.0  # Secondes entre chaque spawn
@@ -20,6 +24,9 @@ var spawn_timer: float = 0.0
 var is_selected: bool = false
 var spawned_resources: Array[Node] = []
 
+# Signal de destruction
+signal building_destroyed(building: Node2D)
+
 # Scène de ressource récoltable
 var harvestable_scene: PackedScene = preload("res://Scenes/Entities/HarvestableResource.tscn")
 
@@ -31,6 +38,12 @@ signal building_clicked(building: Node2D)
 @onready var click_area: Area2D = null
 
 func _ready():
+	# Ajouter au groupe buildings pour la détection par les ennemis
+	add_to_group("buildings")
+
+	# Initialiser les HP
+	current_hp = max_hp
+
 	# Créer une zone cliquable
 	create_click_area()
 	update_visual()
@@ -56,8 +69,8 @@ func _on_click_area_input_event(_viewport, event, _shape_idx):
 		get_tree().call_group("building_manager", "select_building", self)
 
 func _process(delta: float):
-	# Ne pas spawner pour les Markets et Tours
-	if building_type == BuildingType.MARKET or building_type == BuildingType.TOWER:
+	# Ne pas spawner pour les Markets, Tours et HeroHall
+	if building_type == BuildingType.MARKET or building_type == BuildingType.TOWER or building_type == BuildingType.HERO_HALL:
 		return
 
 	# Nettoyer les ressources détruites
@@ -178,10 +191,13 @@ func get_info_text() -> String:
 			production_info = "Spawn: Bois (100%%)\nZone: %.0f px | Intervalle: %.1fs" % [get_spawn_radius(), get_spawn_interval()]
 		BuildingType.MARKET:
 			type_name = "Marché"
-			production_info = "Vendez vos ressources contre de l'or"
+			production_info = "Achetez et vendez des ressources"
 		BuildingType.TOWER:
 			type_name = "Tour"
 			production_info = "Bâtiment défensif"
+		BuildingType.HERO_HALL:
+			type_name = "Caserne de Héros"
+			production_info = "Recrutez des héros pour défendre votre royaume"
 
 	return "%s (Niv. %d)\n%s" % [type_name, level, production_info]
 
@@ -195,3 +211,19 @@ func get_upgrade_cost() -> Dictionary:
 		"wood": upgrade_wood_cost * cost_multiplier,
 		"can_upgrade": true
 	}
+
+func take_damage(amount: float):
+	current_hp -= amount
+
+	# Effet visuel de dégâts
+	if sprite:
+		var tween = create_tween()
+		tween.tween_property(sprite, "modulate", Color.RED, 0.1)
+		tween.tween_property(sprite, "modulate", Color.WHITE if not is_selected else Color(1.2, 1.2, 1.0), 0.1)
+
+	if current_hp <= 0:
+		die()
+
+func die():
+	building_destroyed.emit(self)
+	queue_free()

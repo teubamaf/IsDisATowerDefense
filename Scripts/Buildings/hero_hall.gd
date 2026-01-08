@@ -41,9 +41,9 @@ func purchase_hero() -> bool:
 	current_hero = hero_scene.instantiate()
 	current_hero.global_position = hero_spawn_position
 	current_hero.add_to_group("heroes")
-	
-	# Ajouter au parent
-	var parent_node = get_tree().get_first_node_in_group("game") or get_tree().current_scene
+
+	# Ajouter au parent (utiliser current_scene directement)
+	var parent_node = get_tree().current_scene
 	if parent_node:
 		parent_node.add_child(current_hero)
 	

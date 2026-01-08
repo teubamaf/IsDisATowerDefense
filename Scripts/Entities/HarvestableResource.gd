@@ -4,7 +4,7 @@ extends Area2D
 enum ResourceType { WOOD, STONE, GOLD, RARE }
 
 @export var resource_type: ResourceType = ResourceType.STONE
-@export var hits_required: int = 5
+@export var hits_required: int = 3
 @export var resource_amount: float = 10.0
 @export var lifetime: float = 30.0
 

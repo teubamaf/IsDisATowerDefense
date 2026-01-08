@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://2tq10r5kcbeu"]
+
+[ext_resource type="Texture2D" uid="uid://c45v4e77e3xil" path="res://Assets/Hero/paladin.png" id="1_8h6m1"]
+[ext_resource type="Script" path="res://Scripts/Entities/Paladin.gd" id="2_paladin"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v8pwe"]
+size = Vector2(20, 28)
+
+[node name="Paladin" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("2_paladin")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.33344942, 0.33344942)
+texture = ExtResource("1_8h6m1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_v8pwe")

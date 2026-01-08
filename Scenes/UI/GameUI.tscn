@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bk8vh7m3qp1nx"]
+[gd_scene load_steps=4 format=3 uid="uid://bk8vh7m3qp1nx"]
 
 [ext_resource type="Script" path="res://Scripts/UI/GameUI.gd" id="1_gameui"]
 [ext_resource type="Script" path="res://Scripts/UI/MarketPanel.gd" id="2_marketpanel"]
+[ext_resource type="Script" path="res://Scripts/UI/HeroHallPanel.gd" id="3_herohallpanel"]
 
 [node name="GameUI" type="CanvasLayer"]
 script = ExtResource("1_gameui")
@@ -92,6 +93,11 @@ layout_mode = 2
 text = "Tour
 100 Or, 50 Bois, 20 Pierre"
 
+[node name="HeroHallButton" type="Button" parent="BuildPanel/VBoxContainer"]
+layout_mode = 2
+text = "Caserne Héros
+200 Or, 100 Bois, 50 Pierre"
+
 [node name="InfoPanel" type="PanelContainer" parent="."]
 anchors_preset = 7
 anchor_left = 0.5
@@ -112,16 +118,14 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BottomRightPanel" type="PanelContainer" parent="."]
-anchors_preset = 3
-anchor_left = 1.0
+anchors_preset = 2
 anchor_top = 1.0
-anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -170.0
-offset_top = -250.0
-offset_right = -10.0
+offset_left = 10.0
+offset_top = -180.0
+offset_right = 180.0
 offset_bottom = -10.0
-grow_horizontal = 0
+grow_horizontal = 1
 grow_vertical = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="BottomRightPanel"]
@@ -195,8 +199,8 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -250.0
-offset_top = -300.0
+offset_left = -300.0
+offset_top = -420.0
 offset_right = -10.0
 offset_bottom = -10.0
 grow_horizontal = 0
@@ -208,79 +212,202 @@ layout_mode = 2
 
 [node name="Title" type="Label" parent="MarketPanel/VBoxContainer"]
 layout_mode = 2
-text = "Marché - Vente"
+text = "Marché"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MarketPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="WoodRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
+[node name="SellTitle" type="Label" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+text = "--- Vendre ---"
+horizontal_alignment = 1
+
+[node name="WoodSellRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="WoodLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodRow"]
+[node name="WoodLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodSellRow"]
 layout_mode = 2
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(50, 0)
 text = "Bois:"
 
-[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodRow"]
+[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodSellRow"]
 layout_mode = 2
 text = "-"
 
-[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodRow"]
+[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodSellRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(40, 0)
 text = "10"
 horizontal_alignment = 1
 
-[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodRow"]
+[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodSellRow"]
 layout_mode = 2
 text = "+"
 
-[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodRow"]
+[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodSellRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(60, 0)
-text = "20 Or"
+text = "+20 Or"
 horizontal_alignment = 2
 
-[node name="SellButton" type="Button" parent="MarketPanel/VBoxContainer/WoodRow"]
+[node name="SellButton" type="Button" parent="MarketPanel/VBoxContainer/WoodSellRow"]
 layout_mode = 2
 text = "Vendre"
 
-[node name="StoneRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
+[node name="StoneSellRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="StoneLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneRow"]
+[node name="StoneLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneSellRow"]
 layout_mode = 2
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(50, 0)
 text = "Pierre:"
 
-[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneRow"]
+[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneSellRow"]
 layout_mode = 2
 text = "-"
 
-[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneRow"]
+[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneSellRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(40, 0)
 text = "10"
 horizontal_alignment = 1
 
-[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneRow"]
+[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneSellRow"]
 layout_mode = 2
 text = "+"
 
-[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneRow"]
+[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneSellRow"]
 layout_mode = 2
 custom_minimum_size = Vector2(60, 0)
-text = "30 Or"
+text = "+30 Or"
 horizontal_alignment = 2
 
-[node name="SellButton" type="Button" parent="MarketPanel/VBoxContainer/StoneRow"]
+[node name="SellButton" type="Button" parent="MarketPanel/VBoxContainer/StoneSellRow"]
 layout_mode = 2
 text = "Vendre"
 
 [node name="HSeparator2" type="HSeparator" parent="MarketPanel/VBoxContainer"]
 layout_mode = 2
 
+[node name="BuyTitle" type="Label" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+text = "--- Acheter ---"
+horizontal_alignment = 1
+
+[node name="WoodBuyRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="WoodLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodBuyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 0)
+text = "Bois:"
+
+[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodBuyRow"]
+layout_mode = 2
+text = "-"
+
+[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodBuyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "10"
+horizontal_alignment = 1
+
+[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/WoodBuyRow"]
+layout_mode = 2
+text = "+"
+
+[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/WoodBuyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 0)
+text = "-40 Or"
+horizontal_alignment = 2
+
+[node name="BuyButton" type="Button" parent="MarketPanel/VBoxContainer/WoodBuyRow"]
+layout_mode = 2
+text = "Acheter"
+
+[node name="StoneBuyRow" type="HBoxContainer" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="StoneLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneBuyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 0)
+text = "Pierre:"
+
+[node name="MinusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneBuyRow"]
+layout_mode = 2
+text = "-"
+
+[node name="AmountLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneBuyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+text = "10"
+horizontal_alignment = 1
+
+[node name="PlusButton" type="Button" parent="MarketPanel/VBoxContainer/StoneBuyRow"]
+layout_mode = 2
+text = "+"
+
+[node name="PriceLabel" type="Label" parent="MarketPanel/VBoxContainer/StoneBuyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 0)
+text = "-60 Or"
+horizontal_alignment = 2
+
+[node name="BuyButton" type="Button" parent="MarketPanel/VBoxContainer/StoneBuyRow"]
+layout_mode = 2
+text = "Acheter"
+
+[node name="HSeparator3" type="HSeparator" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+
 [node name="CloseButton" type="Button" parent="MarketPanel/VBoxContainer"]
+layout_mode = 2
+text = "Fermer"
+
+[node name="HeroHallPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = -320.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("3_herohallpanel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HeroHallPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="HeroHallPanel/VBoxContainer"]
+layout_mode = 2
+text = "Caserne de Héros"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HeroHallPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="HeroHallPanel/VBoxContainer"]
+layout_mode = 2
+text = "Aucun héros actif"
+horizontal_alignment = 1
+
+[node name="BuyButton" type="Button" parent="HeroHallPanel/VBoxContainer"]
+layout_mode = 2
+text = "Acheter Paladin"
+
+[node name="UpgradeButton" type="Button" parent="HeroHallPanel/VBoxContainer"]
+layout_mode = 2
+text = "Améliorer"
+
+[node name="HSeparator2" type="HSeparator" parent="HeroHallPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="HeroHallPanel/VBoxContainer"]
 layout_mode = 2
 text = "Fermer"
