@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://die75xlfg864s"]
+
+[ext_resource type="Texture2D" uid="uid://b3y46o2111ipn" path="res://Assets/Projectiles/Fire Effect and Bullet 16x16.png" id="1_d6thu"]
+[ext_resource type="Script" path="res://Scripts/Projectiles/PoisonProjectile.gd" id="2_poison"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uh2gh"]
+radius = 10.0
+
+[node name="Poison_Projectile" type="Area2D"]
+rotation = 0.04052186
+collision_mask = 2
+script = ExtResource("2_poison")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+rotation = -0.044448495
+scale = Vector2(1.75, 1.75)
+texture = ExtResource("1_d6thu")
+region_enabled = true
+region_rect = Rect2(159.90022, 17.989874, 17.088364, 11.982693)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2.9975371, -0.1215322)
+rotation = 1.5707964
+shape = SubResource("CircleShape2D_uh2gh")

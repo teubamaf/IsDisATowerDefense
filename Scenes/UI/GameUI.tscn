@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bk8vh7m3qp1nx"]
+[gd_scene load_steps=5 format=3 uid="uid://bk8vh7m3qp1nx"]
 
 [ext_resource type="Script" path="res://Scripts/UI/GameUI.gd" id="1_gameui"]
 [ext_resource type="Script" path="res://Scripts/UI/MarketPanel.gd" id="2_marketpanel"]
 [ext_resource type="Script" path="res://Scripts/UI/HeroHallPanel.gd" id="3_herohallpanel"]
+[ext_resource type="Script" path="res://Scripts/UI/TowerSpecializationPanel.gd" id="4_specpanel"]
 
 [node name="GameUI" type="CanvasLayer"]
 script = ExtResource("1_gameui")
@@ -411,3 +412,56 @@ layout_mode = 2
 [node name="CloseButton" type="Button" parent="HeroHallPanel/VBoxContainer"]
 layout_mode = 2
 text = "Fermer"
+
+[node name="TowerSpecializationPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -120.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_specpanel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TowerSpecializationPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+text = "Spécialisation de Tour"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+text = "Choisissez une spécialisation"
+horizontal_alignment = 1
+
+[node name="FireButton" type="Button" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+text = "Tour de Feu
+Dégâts de zone + Brûlure"
+
+[node name="IceButton" type="Button" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+text = "Tour de Glace
+Ralentit les ennemis"
+
+[node name="PoisonButton" type="Button" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+text = "Tour Poison
+Dégâts sur la durée"
+
+[node name="HSeparator2" type="HSeparator" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="TowerSpecializationPanel/VBoxContainer"]
+layout_mode = 2
+text = "Annuler"

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dj4p3wpp5f0fu"
-path="res://.godot/imported/HeroHall.png-18c587821d4245b03f875b3bd0bd570a.ctex"
+uid="uid://cfqfaf3wgi0qq"
+path="res://.godot/imported/Tower_fire.png-3ea123a7c3ec5e09416b78be16a1deed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/HeroHall/HeroHall.png"
-dest_files=["res://.godot/imported/HeroHall.png-18c587821d4245b03f875b3bd0bd570a.ctex"]
+source_file="res://Assets/Humans/Towers/Tower_fire.png"
+dest_files=["res://.godot/imported/Tower_fire.png-3ea123a7c3ec5e09416b78be16a1deed.ctex"]
 
 [params]
 

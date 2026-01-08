@@ -1,38 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://c3myk7n5vh8qw"]
+[gd_scene load_steps=3 format=3 uid="uid://c3myk7n5vh8qw"]
 
 [ext_resource type="Script" uid="uid://cu5xxdptfgl0x" path="res://Scripts/Buildings/Building.gd" id="1_building"]
+[ext_resource type="Texture2D" uid="uid://d3sfr27skoxk8" path="res://Assets/Woodmill/Woodmill.png" id="2_bwk2d"]
 
 [node name="Sawmill" type="Node2D"]
+scale = Vector2(0.5, 0.5)
 script = ExtResource("1_building")
 building_type = 1
-production_rate = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.7, 0.5, 0.3, 1)
-
-[node name="BuildingShape" type="Polygon2D" parent="Sprite2D"]
-color = Color(0.6, 0.4, 0.2, 1)
-polygon = PackedVector2Array(-28, -28, 28, -28, 28, 22, -28, 22)
-
-[node name="Roof" type="Polygon2D" parent="Sprite2D"]
-color = Color(0.5, 0.3, 0.15, 1)
-polygon = PackedVector2Array(-32, -28, 0, -45, 32, -28)
-
-[node name="Window1" type="Polygon2D" parent="Sprite2D"]
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(-18, -18, -10, -18, -10, -8, -18, -8)
-
-[node name="Window2" type="Polygon2D" parent="Sprite2D"]
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(10, -18, 18, -18, 18, -8, 10, -8)
-
-[node name="Blade" type="Polygon2D" parent="Sprite2D"]
-color = Color(0.7, 0.7, 0.7, 1)
-polygon = PackedVector2Array(-2, -5, 2, -5, 2, 10, -2, 10)
-
-[node name="WoodPile" type="Polygon2D" parent="Sprite2D"]
-color = Color(0.4, 0.25, 0.1, 1)
-polygon = PackedVector2Array(-22, 8, -15, 8, -15, 22, -22, 22)
+texture = ExtResource("2_bwk2d")
 
 [node name="LevelLabel" type="Label" parent="."]
 offset_left = -20.0

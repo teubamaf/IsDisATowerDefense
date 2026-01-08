@@ -8,6 +8,7 @@ var selected_building: Node2D = null
 @onready var upgrade_panel: Control = null
 @onready var market_panel: Control = null
 @onready var hero_hall_panel: Control = null
+@onready var specialization_panel: Control = null
 
 func _ready():
 	# Trouver les panneaux dans l'UI
@@ -15,6 +16,7 @@ func _ready():
 	upgrade_panel = get_node_or_null("/root/Game/GameUI/UpgradePanel")
 	market_panel = get_node_or_null("/root/Game/GameUI/MarketPanel")
 	hero_hall_panel = get_node_or_null("/root/Game/GameUI/HeroHallPanel")
+	specialization_panel = get_node_or_null("/root/Game/GameUI/TowerSpecializationPanel")
 
 	if upgrade_panel:
 		upgrade_panel.visible = false
@@ -22,6 +24,8 @@ func _ready():
 		market_panel.visible = false
 	if hero_hall_panel:
 		hero_hall_panel.visible = false
+	if specialization_panel:
+		specialization_panel.visible = false
 
 func select_building(building: Node2D, show_panel: bool = true):
 	# Désélectionner le bâtiment précédent
@@ -61,6 +65,12 @@ func show_appropriate_panel():
 			return
 		elif building_type == 4:  # HERO_HALL
 			show_hero_hall_panel()
+			return
+
+	# Vérifier si c'est une tour qui peut être spécialisée
+	if selected_building.has_method("can_specialize"):
+		if selected_building.can_specialize():
+			show_specialization_panel()
 			return
 
 	# Sinon afficher le panneau d'amélioration standard
@@ -144,10 +154,31 @@ func hide_hero_hall_panel():
 		else:
 			hero_hall_panel.visible = false
 
+func show_specialization_panel():
+	hide_upgrade_panel()
+	hide_market_panel()
+	hide_hero_hall_panel()
+
+	if not specialization_panel or not selected_building:
+		return
+
+	if specialization_panel.has_method("show_panel"):
+		specialization_panel.show_panel(selected_building)
+	else:
+		specialization_panel.visible = true
+
+func hide_specialization_panel():
+	if specialization_panel:
+		if specialization_panel.has_method("hide_panel"):
+			specialization_panel.hide_panel()
+		else:
+			specialization_panel.visible = false
+
 func hide_all_panels():
 	hide_upgrade_panel()
 	hide_market_panel()
 	hide_hero_hall_panel()
+	hide_specialization_panel()
 
 func try_upgrade_selected():
 	if selected_building and selected_building.has_method("upgrade"):

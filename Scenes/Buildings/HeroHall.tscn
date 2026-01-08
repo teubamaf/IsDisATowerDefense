@@ -1,10 +1,11 @@
 [gd_scene load_steps=4 format=3 uid="uid://cma6ky6wsckxd"]
 
-[ext_resource type="Texture2D" uid="uid://b6rdnw6taur4h" path="res://Assets/HeroHall/HeroHall.png" id="1_ducat"]
+[ext_resource type="Texture2D" uid="uid://dj4p3wpp5f0fu" path="res://Assets/HeroHall/HeroHall.png" id="1_ducat"]
 [ext_resource type="Script" uid="uid://dyd4cqjvexlwk" path="res://Scripts/Buildings/hero_hall.gd" id="1_gpk57"]
 [ext_resource type="PackedScene" uid="uid://2tq10r5kcbeu" path="res://Scenes/Heros/Paladin.tscn" id="3_paladin"]
 
 [node name="HeroHall" type="Node2D"]
+scale = Vector2(0.6, 0.6)
 script = ExtResource("1_gpk57")
 hero_scene = ExtResource("3_paladin")
 hero_cost_gold = 300.0
@@ -13,8 +14,6 @@ hero_cost_stone = 50.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-position = Vector2(14.5, 14.5)
-scale = Vector2(1.453125, 1.453125)
 texture = ExtResource("1_ducat")
 
 [node name="LevelLabel" type="Label" parent="."]

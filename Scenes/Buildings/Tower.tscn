@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://daep65fasj2rv"]
 
-[ext_resource type="Texture2D" uid="uid://csddd3t12ex88" path="res://Assets/tower.png" id="1_ry8d0"]
 [ext_resource type="Script" uid="uid://ldorr68qx5n3" path="res://Scripts/Buildings/Tower.gd" id="1_tower"]
+[ext_resource type="Texture2D" uid="uid://dn4g8qgsav6xx" path="res://Assets/Humans/Towers/Tower_classic.png" id="2_ak2qy"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_4yjk7"]
 radius = 200.0
@@ -12,10 +12,7 @@ script = ExtResource("1_tower")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.4, 0.4, 0.8, 1)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("1_ry8d0")
-hframes = 3
-vframes = 2
-frame = 3
+texture = ExtResource("2_ak2qy")
 
 [node name="AttackRange" type="Area2D" parent="."]
 collision_layer = 0

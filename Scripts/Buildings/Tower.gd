@@ -1,4 +1,8 @@
 extends Node2D
+class_name Tower
+
+# Types de tours
+enum TowerType { CLASSIC, FIRE, ICE, POISON }
 
 @export var damage: float = 15.0
 @export var attack_speed: float = 1.0
@@ -13,8 +17,19 @@ var current_hp: float = 200.0
 # Marqueur pour indiquer que c'est une tour (menace pour les ennemis)
 var is_tower: bool = true
 
-# Scène de la flèche à instancier
-var arrow_scene: PackedScene = preload("res://Scenes/Projectiles/Arrow.tscn")
+# Type de tour et spécialisation
+var tower_type: TowerType = TowerType.CLASSIC
+var is_specialized: bool = false
+const SPECIALIZATION_LEVEL: int = 5
+
+# Scènes de projectiles
+var projectile_scene: PackedScene = preload("res://Scenes/Projectiles/Arrow.tscn")
+var fire_projectile_scene: PackedScene = preload("res://Scenes/Projectiles/Fire_projectile.tscn")
+var ice_projectile_scene: PackedScene = preload("res://Scenes/Projectiles/Ice_projectile.tscn")
+var poison_projectile_scene: PackedScene = preload("res://Scenes/Projectiles/Poison_projectile.tscn")
+
+# Textures des tours
+var tower_textures: Dictionary = {}
 
 # Coûts d'amélioration
 @export var upgrade_gold_cost: float = 100.0
@@ -105,11 +120,11 @@ func _on_attack_timer_timeout():
 		attack(current_target)
 
 func attack(enemy: Node2D):
-	# Créer une flèche et la tirer vers l'ennemi
-	var arrow = arrow_scene.instantiate()
-	get_tree().current_scene.add_child(arrow)
-	arrow.global_position = global_position
-	arrow.setup(enemy, damage)
+	# Créer un projectile et le tirer vers l'ennemi
+	var projectile = projectile_scene.instantiate()
+	get_tree().current_scene.add_child(projectile)
+	projectile.global_position = global_position
+	projectile.setup(enemy, damage)
 
 func _on_body_entered(body: Node2D):
 	if body.is_in_group("enemies"):
@@ -164,14 +179,89 @@ func update_visual():
 		var scale_factor = 0.5 * (1.0 + (level * 0.05))
 		sprite.scale = Vector2(scale_factor, scale_factor)
 
+		# Couleur selon le type de tour
+		var base_color = get_tower_color()
+
 		# Ajouter un effet visuel de sélection
 		if is_selected:
-			sprite.modulate = Color(1.2, 1.2, 1.0)
+			sprite.modulate = Color(base_color.r * 1.3, base_color.g * 1.3, base_color.b * 1.3)
 		else:
-			sprite.modulate = Color(0.4, 0.4, 0.8)
+			sprite.modulate = base_color
+
+func get_tower_color() -> Color:
+	match tower_type:
+		TowerType.FIRE:
+			return Color(1.0, 0.5, 0.3)  # Orange
+		TowerType.ICE:
+			return Color(0.5, 0.8, 1.0)  # Bleu clair
+		TowerType.POISON:
+			return Color(0.5, 1.0, 0.5)  # Vert
+		_:
+			return Color(0.4, 0.4, 0.8)  # Bleu foncé (classique)
 
 func get_info_text() -> String:
-	return "Tour (Niv. %d)\nDégâts: %.1f\nPortée: %.0f\nVitesse: %.1f/s" % [level, damage, attack_range, attack_speed]
+	var type_name = get_tower_type_name()
+	return "%s (Niv. %d)\nDégâts: %.1f\nPortée: %.0f\nVitesse: %.1f/s" % [type_name, level, damage, attack_range, attack_speed]
+
+func get_tower_type_name() -> String:
+	match tower_type:
+		TowerType.FIRE:
+			return "Tour de Feu"
+		TowerType.ICE:
+			return "Tour de Glace"
+		TowerType.POISON:
+			return "Tour Poison"
+		_:
+			return "Tour"
+
+func can_specialize() -> bool:
+	return level >= SPECIALIZATION_LEVEL and not is_specialized
+
+func specialize(new_type: TowerType):
+	if not can_specialize():
+		return
+
+	tower_type = new_type
+	is_specialized = true
+
+	# Changer le projectile selon le type
+	match tower_type:
+		TowerType.FIRE:
+			projectile_scene = fire_projectile_scene
+			damage *= 0.8  # Moins de dégâts directs mais AoE
+		TowerType.ICE:
+			projectile_scene = ice_projectile_scene
+			attack_speed *= 0.8  # Attaque plus lente mais ralentit
+		TowerType.POISON:
+			projectile_scene = poison_projectile_scene
+			damage *= 0.6  # Moins de dégâts directs mais DoT
+
+	# Mettre à jour le timer d'attaque
+	if attack_timer:
+		attack_timer.wait_time = 1.0 / attack_speed
+
+	# Changer le visuel
+	update_tower_sprite()
+	update_visual()
+
+func update_tower_sprite():
+	if not sprite:
+		return
+
+	# Charger la texture correspondant au type de tour
+	var texture_path = ""
+	match tower_type:
+		TowerType.FIRE:
+			texture_path = "res://Assets/Humans/Towers/Tower_fire.png"
+		TowerType.ICE:
+			texture_path = "res://Assets/Humans/Towers/Tower_ice.png"
+		TowerType.POISON:
+			texture_path = "res://Assets/Humans/Towers/Tower_poison.png"
+		_:
+			texture_path = "res://Assets/Humans/Towers/Tower_classic.png"
+
+	if ResourceLoader.exists(texture_path):
+		sprite.texture = load(texture_path)
 
 func get_upgrade_cost() -> Dictionary:
 	if level >= max_level:
@@ -190,9 +280,11 @@ func take_damage(amount: float):
 
 	# Effet visuel de dégâts
 	if sprite:
+		var base_color = get_tower_color()
+		var normal_color = base_color if not is_selected else Color(base_color.r * 1.3, base_color.g * 1.3, base_color.b * 1.3)
 		var tween = create_tween()
 		tween.tween_property(sprite, "modulate", Color.RED, 0.1)
-		tween.tween_property(sprite, "modulate", Color(0.4, 0.4, 0.8) if not is_selected else Color(1.2, 1.2, 1.0), 0.1)
+		tween.tween_property(sprite, "modulate", normal_color, 0.1)
 
 	if current_hp <= 0:
 		die()

@@ -9,9 +9,13 @@ extends CharacterBody2D
 @export var detection_range: float = 150.0  # Portée de détection des bâtiments
 
 var current_hp: float
+var base_speed: float  # Vitesse de base (pour le ralentissement)
 var castle_target: Node2D = null
 var current_target: Node2D = null  # Cible actuelle (bâtiment ou château)
 var can_attack: bool = true
+
+# Effets de statut actifs
+var status_effects: Dictionary = {}  # {"burn": {damage, remaining}, "slow": {amount, remaining}, "poison": {damage, remaining}}
 
 # Références
 @onready var sprite = $Sprite2D
@@ -20,6 +24,7 @@ var can_attack: bool = true
 
 func _ready():
 	current_hp = max_hp
+	base_speed = speed
 	add_to_group("enemies")
 
 	# Trouver le château
@@ -33,9 +38,12 @@ func _ready():
 
 	update_hp_bar()
 
-func _physics_process(_delta: float):
+func _physics_process(delta: float):
 	if castle_target == null or not is_instance_valid(castle_target):
 		return
+
+	# Gérer les effets de statut
+	process_status_effects(delta)
 
 	# Chercher le bâtiment le plus proche dans la portée de détection
 	find_nearest_target()
@@ -129,3 +137,44 @@ func update_hp_bar():
 		hp_bar.max_value = max_hp
 		hp_bar.value = current_hp
 		hp_bar.visible = current_hp < max_hp
+
+# Système d'effets de statut
+func apply_status_effect(effect_type: String, value: float, duration: float):
+	status_effects[effect_type] = {
+		"value": value,
+		"remaining": duration,
+		"tick_timer": 0.0
+	}
+
+	# Appliquer immédiatement l'effet de ralentissement
+	if effect_type == "slow":
+		speed = base_speed * (1.0 - value)
+
+func process_status_effects(delta: float):
+	var effects_to_remove: Array[String] = []
+
+	for effect_type in status_effects.keys():
+		var effect = status_effects[effect_type]
+		effect["remaining"] -= delta
+
+		if effect["remaining"] <= 0:
+			effects_to_remove.append(effect_type)
+			continue
+
+		# Appliquer les dégâts périodiques (burn et poison)
+		if effect_type == "burn" or effect_type == "poison":
+			effect["tick_timer"] += delta
+			if effect["tick_timer"] >= 1.0:  # Dégâts toutes les secondes
+				effect["tick_timer"] = 0.0
+				take_damage(effect["value"])
+
+	# Supprimer les effets expirés
+	for effect_type in effects_to_remove:
+		remove_status_effect(effect_type)
+
+func remove_status_effect(effect_type: String):
+	if status_effects.has(effect_type):
+		# Restaurer la vitesse si c'était un slow
+		if effect_type == "slow":
+			speed = base_speed
+		status_effects.erase(effect_type)

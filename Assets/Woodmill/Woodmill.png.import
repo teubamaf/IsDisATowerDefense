@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dj4p3wpp5f0fu"
-path="res://.godot/imported/HeroHall.png-18c587821d4245b03f875b3bd0bd570a.ctex"
+uid="uid://d3sfr27skoxk8"
+path="res://.godot/imported/Woodmill.png-90988a43f81a3a2e8dd9e9efa0fa84d4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/HeroHall/HeroHall.png"
-dest_files=["res://.godot/imported/HeroHall.png-18c587821d4245b03f875b3bd0bd570a.ctex"]
+source_file="res://Assets/Woodmill/Woodmill.png"
+dest_files=["res://.godot/imported/Woodmill.png-90988a43f81a3a2e8dd9e9efa0fa84d4.ctex"]
 
 [params]
 

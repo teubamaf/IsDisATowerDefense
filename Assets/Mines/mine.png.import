@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dj4p3wpp5f0fu"
-path="res://.godot/imported/HeroHall.png-18c587821d4245b03f875b3bd0bd570a.ctex"
+uid="uid://bcoglx31orc8p"
+path="res://.godot/imported/mine.png-ddab146b355c758f99bf787827192e06.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/HeroHall/HeroHall.png"
-dest_files=["res://.godot/imported/HeroHall.png-18c587821d4245b03f875b3bd0bd570a.ctex"]
+source_file="res://Assets/Mines/mine.png"
+dest_files=["res://.godot/imported/mine.png-ddab146b355c758f99bf787827192e06.ctex"]
 
 [params]
 

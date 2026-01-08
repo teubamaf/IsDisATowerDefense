@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b2v8xnhq1qc5m"]
 
 [ext_resource type="Script" uid="uid://cdwdt4d3kkclo" path="res://Scripts/Buildings/Castle.gd" id="1_castle"]
-[ext_resource type="Texture2D" uid="uid://ditaxukk6nup0" path="res://Assets/Humans/HumanCastle.png" id="2_dx17m"]
+[ext_resource type="Texture2D" uid="uid://clo5c2s6a237d" path="res://Assets/Humans/HumanCastle.png" id="2_dx17m"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_castle"]
 radius = 200.0
