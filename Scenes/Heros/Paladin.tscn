@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://2tq10r5kcbeu"]
 
 [ext_resource type="Texture2D" uid="uid://c45v4e77e3xil" path="res://Assets/Hero/paladin.png" id="1_8h6m1"]
-[ext_resource type="Script" path="res://Scripts/Entities/Paladin.gd" id="2_paladin"]
+[ext_resource type="Script" uid="uid://ceffum3wyx7vo" path="res://Scripts/Entities/Paladin.gd" id="2_paladin"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v8pwe"]
 size = Vector2(20, 28)
