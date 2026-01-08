@@ -13,6 +13,8 @@ var race: String = "human"
 var race_skins = {
 	"human": preload("res://Assets/Humans/HumanCastle.png"),
 	"orc": preload("res://Assets/Orcs/OrcCastle.png")
+	#"elf": preload("res://Assets/Elves/ElfCastle.png"),
+	#"dwarf": preload("res://Assets/Dwarves/DwarfCastle.png")
 }
 
 # Combat

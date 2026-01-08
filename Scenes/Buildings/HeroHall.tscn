@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://cma6ky6wsckxd"]
+
+[ext_resource type="Texture2D" uid="uid://b6rdnw6taur4h" path="res://Assets/HeroHall/HeroHall.png" id="1_ducat"]
+[ext_resource type="Script" uid="uid://dyd4cqjvexlwk" path="res://Scripts/Buildings/hero_hall.gd" id="1_gpk57"]
+
+[node name="HeroHall" type="Node2D"]
+script = ExtResource("1_gpk57")
+hero_cost_gold = null
+hero_cost_wood = null
+hero_cost_stone = null
+building_type = null
+production_rate = null
+level = null
+max_level = null
+upgrade_gold_cost = null
+upgrade_wood_cost = null
+metadata/_custom_type_script = "uid://cu5xxdptfgl0x"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(14.5, 14.5)
+scale = Vector2(1.453125, 1.453125)
+texture = ExtResource("1_ducat")
