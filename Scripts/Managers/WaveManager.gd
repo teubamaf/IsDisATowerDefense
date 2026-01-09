@@ -1,12 +1,18 @@
 extends Node2D
 
-# Préchargement de la scène ennemie
-@export var enemy_scene: PackedScene
-@export var spawn_distance: float = 400.0  # Distance du château pour spawn
+# Scènes d'ennemis
+var orc_scene: PackedScene = preload("res://Scenes/Entities/Ennemies/Orc.tscn")
+var soldier_scene: PackedScene = preload("res://Scenes/Entities/Ennemies/Soldier.tscn")
+
+@export var spawn_distance: float = 400.0
 
 @onready var game_manager = GameManager
 var castle_position: Vector2 = Vector2.ZERO
 var active_enemies: Array[Node2D] = []
+
+# Configuration des vagues : liste de dictionnaires définissant chaque vague
+# Chaque vague contient des groupes d'ennemis à spawn
+var wave_configs: Array[Dictionary] = []
 
 func _ready():
 	# Connecter aux signaux du GameManager
@@ -31,42 +37,69 @@ func _on_wave_started(wave_num: int):
 func spawn_wave(wave_num: int):
 	active_enemies.clear()
 
-	# Calculer le nombre d'ennemis selon la vague
-	var enemy_count = 5 + (wave_num * 3)
-	var spawn_delay = 0.5  # Délai entre chaque spawn
+	# Obtenir la configuration de la vague
+	var wave_config = get_wave_config(wave_num)
+	var spawn_delay = 0.4
 
-	for i in range(enemy_count):
-		await get_tree().create_timer(spawn_delay).timeout
-		spawn_enemy(wave_num)
+	# Spawner chaque groupe d'ennemis
+	for group in wave_config:
+		var enemy_scene = group["scene"]
+		var count = group["count"]
 
-func spawn_enemy(wave_num: int):
+		for i in range(count):
+			await get_tree().create_timer(spawn_delay).timeout
+			spawn_enemy_of_type(enemy_scene, wave_num)
+
+func get_wave_config(wave_num: int) -> Array:
+	# Configuration des vagues
+	# Vagues 1-2: Soldiers uniquement (faciles)
+	# Vagues 3-4: Mix Soldiers + quelques Orcs
+	# Vagues 5+: Plus d'Orcs, scaling progressif
+
+	var config: Array = []
+
+	if wave_num <= 2:
+		# Vagues faciles: que des soldiers
+		config.append({"scene": soldier_scene, "count": 4 + wave_num * 2})
+	elif wave_num <= 4:
+		# Introduction des orcs
+		config.append({"scene": soldier_scene, "count": 3 + wave_num})
+		config.append({"scene": orc_scene, "count": wave_num - 1})
+	elif wave_num <= 7:
+		# Mix équilibré
+		config.append({"scene": soldier_scene, "count": 4 + wave_num})
+		config.append({"scene": orc_scene, "count": 2 + wave_num})
+	else:
+		# Vagues difficiles: beaucoup d'orcs
+		config.append({"scene": soldier_scene, "count": 5 + wave_num})
+		config.append({"scene": orc_scene, "count": 4 + wave_num})
+
+	return config
+
+func spawn_enemy_of_type(enemy_scene: PackedScene, wave_num: int):
 	if not enemy_scene:
 		print("Erreur: Scène ennemie non définie !")
 		return
 
-	# Créer l'ennemi
 	var enemy = enemy_scene.instantiate()
 
 	# Obtenir une position de spawn aux bords des zones débloquées
 	var spawn_pos = get_edge_spawn_position()
 	if spawn_pos == Vector2.ZERO:
-		# Fallback: position aléatoire autour du château si aucune zone trouvée
 		var angle = randf() * TAU
 		spawn_pos = castle_position + Vector2(cos(angle), sin(angle)) * spawn_distance
 
 	enemy.global_position = spawn_pos
 
-	# Augmenter les stats selon la vague
-	if enemy.has_method("scale_for_wave"):
-		enemy.scale_for_wave(wave_num)
-	else:
-		# Scaling par défaut
-		enemy.max_hp *= (1.0 + wave_num * 0.2)
-		enemy.current_hp = enemy.max_hp
-		enemy.damage *= (1.0 + wave_num * 0.1)
-		enemy.gold_reward *= (1.0 + wave_num * 0.3)
+	# Scaling selon la vague (à partir de la vague 3)
+	if wave_num > 2:
+		var scale_factor = 1.0 + (wave_num - 2) * 0.15
+		enemy.max_hp *= scale_factor
+		enemy.damage *= (1.0 + (wave_num - 2) * 0.1)
+		enemy.gold_reward *= (1.0 + (wave_num - 2) * 0.2)
 
-	# Ajouter au jeu
+	enemy.current_hp = enemy.max_hp
+
 	add_child(enemy)
 	active_enemies.append(enemy)
 

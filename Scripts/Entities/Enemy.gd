@@ -1,24 +1,29 @@
+class_name Enemy
 extends CharacterBody2D
 
-# Statistiques de l'ennemi
+# States pour la state machine
+enum State { IDLE, WALK, ATTACK, DEAD }
+
+# Statistiques de l'ennemi (peuvent être overridées par les enfants)
 @export var max_hp: float = 50.0
 @export var speed: float = 50.0
 @export var damage: float = 10.0
 @export var gold_reward: float = 5.0
 @export var attack_cooldown: float = 1.0
-@export var detection_range: float = 150.0  # Portée de détection des bâtiments
+@export var detection_range: float = 150.0
 
 var current_hp: float
-var base_speed: float  # Vitesse de base (pour le ralentissement)
+var base_speed: float
 var castle_target: Node2D = null
-var current_target: Node2D = null  # Cible actuelle (bâtiment ou château)
+var current_target: Node2D = null
 var can_attack: bool = true
+var current_state: State = State.IDLE
 
 # Effets de statut actifs
-var status_effects: Dictionary = {}  # {"burn": {damage, remaining}, "slow": {amount, remaining}, "poison": {damage, remaining}}
+var status_effects: Dictionary = {}
 
 # Références
-@onready var sprite = $Sprite2D
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hp_bar = $HPBar
 @onready var attack_timer = $AttackTimer
 
@@ -37,32 +42,77 @@ func _ready():
 		attack_timer.timeout.connect(_on_attack_timer_timeout)
 
 	update_hp_bar()
+	change_state(State.WALK)
 
 func _physics_process(delta: float):
 	if castle_target == null or not is_instance_valid(castle_target):
 		return
 
+	if current_state == State.DEAD:
+		return
+
 	# Gérer les effets de statut
 	process_status_effects(delta)
 
-	# Chercher le bâtiment le plus proche dans la portée de détection
+	# Chercher le bâtiment le plus proche
 	find_nearest_target()
 
-	# Déterminer la cible (bâtiment proche ou château)
+	# Déterminer la cible
 	var target = current_target if current_target and is_instance_valid(current_target) else castle_target
 
 	# Se déplacer vers la cible
 	var direction = (target.global_position - global_position).normalized()
-	velocity = direction * speed
+
+	# Flip le sprite selon la direction
+	if animated_sprite:
+		animated_sprite.flip_h = direction.x < 0
 
 	# Vérifier si on est assez proche pour attaquer
 	var distance = global_position.distance_to(target.global_position)
-	if distance < 50.0:  # Distance d'attaque
+	if distance < 50.0:
 		velocity = Vector2.ZERO
 		if can_attack:
+			change_state(State.ATTACK)
 			attack_target(target)
+	else:
+		velocity = direction * speed
+		if current_state != State.WALK:
+			change_state(State.WALK)
 
 	move_and_slide()
+
+# State Machine
+func change_state(new_state: State):
+	if current_state == new_state:
+		return
+
+	exit_state(current_state)
+	current_state = new_state
+	enter_state(new_state)
+
+func enter_state(state: State):
+	match state:
+		State.IDLE:
+			play_animation("idle")
+		State.WALK:
+			play_animation("walk")
+		State.ATTACK:
+			play_animation("attack")
+		State.DEAD:
+			play_animation("death")
+
+func exit_state(_state: State):
+	pass
+
+func play_animation(anim_name: String):
+	if animated_sprite and animated_sprite.sprite_frames:
+		if animated_sprite.sprite_frames.has_animation(anim_name):
+			animated_sprite.play(anim_name)
+		elif anim_name == "attack" and animated_sprite.sprite_frames.has_animation("walk"):
+			# Fallback si pas d'animation d'attaque
+			animated_sprite.play("walk")
+		elif animated_sprite.sprite_frames.has_animation("walk"):
+			animated_sprite.play("walk")
 
 func find_nearest_target():
 	# Chercher le bâtiment le plus proche, en priorisant les tours (menaces)
@@ -118,13 +168,13 @@ func take_damage(amount: float):
 		die()
 
 func flash_damage():
-	if sprite:
-		# Animation flash rouge
+	if animated_sprite:
 		var tween = create_tween()
-		tween.tween_property(sprite, "modulate", Color.RED, 0.1)
-		tween.tween_property(sprite, "modulate", Color.WHITE, 0.1)
+		tween.tween_property(animated_sprite, "modulate", Color.RED, 0.1)
+		tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.1)
 
 func die():
+	change_state(State.DEAD)
 	# Donner des récompenses
 	GameManager.add_gold(gold_reward)
 	print("Ennemi tué ! +", gold_reward, " or")

@@ -22,6 +22,9 @@ var tower_type: TowerType = TowerType.CLASSIC
 var is_specialized: bool = false
 const SPECIALIZATION_LEVEL: int = 5
 
+# Scènes d'explosion
+var explosion_scene: PackedScene = preload("res://Scenes/VFX/Explosion.tscn")
+
 # Scènes de projectiles
 var projectile_scene: PackedScene = preload("res://Scenes/Projectiles/Arrow.tscn")
 var fire_projectile_scene: PackedScene = preload("res://Scenes/Projectiles/Fire_projectile.tscn")
@@ -291,4 +294,10 @@ func take_damage(amount: float):
 
 func die():
 	building_destroyed.emit(self)
+
+	# Spawner l'explosion
+	var explosion = explosion_scene.instantiate()
+	explosion.global_position = global_position
+	get_tree().current_scene.add_child(explosion)
+
 	queue_free()
